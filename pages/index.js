@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 import Webcam from "react-webcam";
 import * as mobilenet from "@tensorflow-models/mobilenet";
-import * as faceapi from "face-api.js";
 import "@tensorflow/tfjs";
 import { shuffleItems } from "../lib/items";
 import { Camera, CheckCircle2, Trophy, Loader2, Medal } from "lucide-react";
@@ -42,6 +41,7 @@ export default function ScavengerHunt() {
   const [isLoading, setIsLoading] = useState(false);
   const [model, setModel] = useState(null);
   const [faceModelsLoaded, setFaceModelsLoaded] = useState(false);
+  const faceapiRef = useRef(null);
   const [message, setMessage] = useState("Point camera at the item");
   const [errorCount, setErrorCount] = useState(0);
   const [startTime, setStartTime] = useState(null);
@@ -61,6 +61,8 @@ export default function ScavengerHunt() {
   // Load AI Models and leaderboard on mount
   useEffect(() => {
     const loadModels = async () => {
+      const faceapi = await import("@vladmandic/face-api");
+      faceapiRef.current = faceapi;
       const [m] = await Promise.all([
         mobilenet.load(),
         faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
@@ -91,6 +93,7 @@ export default function ScavengerHunt() {
     const currentItem = questions[currentIndex];
 
     if (currentItem.type === "person") {
+      const faceapi = faceapiRef.current;
       // Use face recognition against saved descriptor
       const savedRaw = localStorage.getItem("hunt-master-descriptor");
       if (!savedRaw) {
@@ -374,7 +377,7 @@ export default function ScavengerHunt() {
         <button
           onClick={captureAndVerify}
           disabled={isLoading || !model || !faceModelsLoaded}
-          className="mt-8 bg-white text-black p-6 rounded-full shadow-xl active:scale-95 transition disabled:opacity-50"
+          className="mt-8 bg-white text-black p-6 rounded-full shadow-xl active:scale-10 transition disabled:opacity-50"
         >
           <Camera size={32} />
         </button>

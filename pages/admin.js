@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
-import * as faceapi from "face-api.js";
 import { Camera, Loader2, CheckCircle2, Trash2 } from "lucide-react";
 
 const DESCRIPTOR_KEY = "hunt-master-descriptor";
@@ -12,9 +11,12 @@ export default function AdminSetup() {
   const [hasSaved, setHasSaved] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const webcamRef = useRef(null);
+  const faceapiRef = useRef(null);
 
   useEffect(() => {
     const load = async () => {
+      const faceapi = await import("@vladmandic/face-api");
+      faceapiRef.current = faceapi;
       await Promise.all([
         faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
         faceapi.nets.faceLandmark68TinyNet.loadFromUri("/models"),
@@ -29,6 +31,7 @@ export default function AdminSetup() {
 
   const capture = async () => {
     if (!modelsLoaded || !webcamRef.current) return;
+    const faceapi = faceapiRef.current;
     setIsCapturing(true);
     setStatus("Detecting face...");
 

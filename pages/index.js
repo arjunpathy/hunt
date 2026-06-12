@@ -45,7 +45,16 @@ export default function ScavengerHunt() {
   const [startTime, setStartTime] = useState(null);
   const [finalResult, setFinalResult] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [elapsed, setElapsed] = useState(0);
   const webcamRef = useRef(null);
+
+  useEffect(() => {
+    if (!gameStarted || currentIndex >= questions.length) return;
+    const interval = setInterval(() => {
+      setElapsed(Math.round((Date.now() - startTime) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [gameStarted, startTime, currentIndex, questions.length]);
 
   // Load AI Model and leaderboard on mount
   useEffect(() => {
@@ -256,15 +265,6 @@ export default function ScavengerHunt() {
       </div>
     );
   }
-
-  const [elapsed, setElapsed] = useState(0);
-  useEffect(() => {
-    if (!gameStarted || currentIndex >= questions.length) return;
-    const interval = setInterval(() => {
-      setElapsed(Math.round((Date.now() - startTime) / 1000));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [gameStarted, startTime, currentIndex, questions.length]);
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">

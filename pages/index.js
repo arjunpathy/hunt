@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 import Webcam from "react-webcam";
 import * as mobilenet from "@tensorflow-models/mobilenet";
+import * as faceapi from "face-api.js";
 import "@tensorflow/tfjs";
 import { shuffleItems } from "../lib/items";
 import { Camera, CheckCircle2, Trophy, Loader2, Medal } from "lucide-react";
@@ -40,6 +41,7 @@ export default function ScavengerHunt() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [model, setModel] = useState(null);
+  const [faceModelsLoaded, setFaceModelsLoaded] = useState(false);
   const [message, setMessage] = useState("Point camera at the item");
   const [errorCount, setErrorCount] = useState(0);
   const [startTime, setStartTime] = useState(null);
@@ -56,13 +58,19 @@ export default function ScavengerHunt() {
     return () => clearInterval(interval);
   }, [gameStarted, startTime, currentIndex, questions.length]);
 
-  // Load AI Model and leaderboard on mount
+  // Load AI Models and leaderboard on mount
   useEffect(() => {
-    const loadModel = async () => {
-      const m = await mobilenet.load();
+    const loadModels = async () => {
+      const [m] = await Promise.all([
+        mobilenet.load(),
+        faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+        faceapi.nets.faceLandmark68TinyNet.loadFromUri("/models"),
+        faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+      ]);
       setModel(m);
+      setFaceModelsLoaded(true);
     };
-    loadModel();
+    loadModels();
     setLeaderboard(getLeaderboard());
   }, []);
 
@@ -80,15 +88,66 @@ export default function ScavengerHunt() {
     setIsLoading(true);
     setMessage("Analyzing...");
 
+    const currentItem = questions[currentIndex];
+
+    if (currentItem.type === "person") {
+      // Use face recognition against saved descriptor
+      const savedRaw = localStorage.getItem("hunt-master-descriptor");
+      if (!savedRaw) {
+        setMessage(
+          "No Hunt Master face saved. Ask the admin to visit /admin first.",
+        );
+        setIsLoading(false);
+        return;
+      }
+      const savedDescriptor = new Float32Array(JSON.parse(savedRaw));
+      const video = webcamRef.current.video;
+      const detection = await faceapi
+        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks(true)
+        .withFaceDescriptor();
+
+      if (!detection) {
+        setErrorCount((c) => c + 1);
+        setMessage("No face detected. Try again!");
+        setIsLoading(false);
+        return;
+      }
+
+      const distance = faceapi.euclideanDistance(
+        savedDescriptor,
+        detection.descriptor,
+      );
+      // distance < 0.5 is a confident match
+      const found = distance < 0.5;
+      if (found) {
+        if (currentIndex + 1 < questions.length) {
+          confetti();
+          setCurrentIndex(currentIndex + 1);
+          setMessage("Correct! Find the next item.");
+        } else {
+          confetti({ particleCount: 150, spread: 70 });
+          const timeTaken = Math.round((Date.now() - startTime) / 1000);
+          const updatedBoard = saveResult(teamName, timeTaken, errorCount);
+          setFinalResult({ timeTaken, errors: errorCount });
+          setLeaderboard(updatedBoard);
+          setCurrentIndex(questions.length);
+        }
+      } else {
+        setErrorCount((c) => c + 1);
+        setMessage("Not quite. Try again!");
+      }
+      setIsLoading(false);
+      return;
+    }
+
     const imageSrc = webcamRef.current.getScreenshot();
     const img = new Image();
     img.src = imageSrc;
 
     img.onload = async () => {
       const predictions = await model.classify(img);
-      const currentItem = questions[currentIndex];
-
-      const found = predictions.some((p) =>
+      let found = predictions.some((p) =>
         currentItem.keywords.some((k) => p.className.toLowerCase().includes(k)),
       );
 
@@ -128,10 +187,16 @@ export default function ScavengerHunt() {
         />
         <button
           onClick={startGame}
-          className="bg-blue-600 hover:bg-blue-500 px-8 py-4 rounded-xl font-bold w-full max-w-sm transition mb-10"
+          className="bg-blue-600 hover:bg-blue-500 px-8 py-4 rounded-xl font-bold w-full max-w-sm transition mb-4"
         >
           START GAME
         </button>
+        <a
+          href="/admin"
+          className="text-slate-500 hover:text-slate-300 text-sm mb-10 transition"
+        >
+          ⚙ Admin: set Hunt Master face
+        </a>
 
         {leaderboard.length > 0 && (
           <div className="w-full max-w-sm">
@@ -308,7 +373,7 @@ export default function ScavengerHunt() {
 
         <button
           onClick={captureAndVerify}
-          disabled={isLoading || !model}
+          disabled={isLoading || !model || !faceModelsLoaded}
           className="mt-8 bg-white text-black p-6 rounded-full shadow-xl active:scale-95 transition disabled:opacity-50"
         >
           <Camera size={32} />

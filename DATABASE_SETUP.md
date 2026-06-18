@@ -1,14 +1,47 @@
 # Database Functionality - Hunt Score Management
 
-Your scavenger hunt application now includes persistent database functionality for tracking scores!
+Your scavenger hunt application now includes persistent database functionality using **MongoDB**, which works perfectly with Vercel!
 
 ## What's New
 
 ### Database System
 
-- **Database**: SQLite (stored in `hunt.db`)
-- **No setup required**: Database is automatically created on first run
-- **Zero configuration**: Uses file-based SQLite for simplicity
+- **Database**: MongoDB (Cloud-based via MongoDB Atlas)
+- **Framework**: Mongoose for data modeling
+- **Serverless-compatible**: Works on Vercel, Netlify, and other serverless platforms
+- **Free tier available**: MongoDB Atlas free tier is generous
+
+### Setup Instructions
+
+#### 1. Create a MongoDB Atlas Cluster (FREE)
+
+1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register)
+2. Sign up for a free account
+3. Create a new project
+4. Create a cluster (free tier M0)
+5. Set up a username and password
+6. Add your IP address to the network access whitelist (or allow 0.0.0.0/0 for development)
+7. Copy the connection string
+
+#### 2. Configure Environment Variable
+
+1. Copy `.env.local.example` to `.env.local`:
+
+   ```bash
+   cp .env.local.example .env.local
+   ```
+
+2. Edit `.env.local` and add your MongoDB connection string:
+   ```
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/hunt?retryWrites=true&w=majority
+   ```
+
+#### 3. Deploy to Vercel
+
+1. Push your code to GitHub
+2. Import your repo in [Vercel](https://vercel.com)
+3. Add the `MONGODB_URI` environment variable in Vercel project settings
+4. Deploy!
 
 ### New API Endpoints
 
@@ -70,22 +103,25 @@ A password-protected admin dashboard to:
 
 ## Database Schema
 
-The application automatically creates a `scores` table with:
+MongoDB collection structure:
 
-- `id`: Auto-incrementing primary key
-- `teamName`: Team name (text)
-- `timeTaken`: Time in seconds (integer)
-- `errors`: Number of errors made (integer)
-- `completedAt`: Timestamp when game was completed (integer)
-- `createdAt`: Timestamp when record was created (datetime)
-
-Indexes are automatically created on `timeTaken` and `completedAt` for fast queries.
+```javascript
+{
+  _id: ObjectId,
+  teamName: String,          // Indexed
+  timeTaken: Number,         // Indexed (in seconds)
+  errors: Number,
+  completedAt: Number,       // Unix timestamp, Indexed
+  createdAt: Date,           // Auto-generated
+  updatedAt: Date            // Auto-generated
+}
+```
 
 ## File Structure
 
 ```
 lib/
-├── db.js                    # Database connection and queries
+├── db.js                    # MongoDB connection and queries
 items.js                     # (unchanged) Item definitions
 
 pages/
@@ -97,63 +133,83 @@ pages/
 ├── _app.js                 # (unchanged)
 └── scores-management.js    # NEW: Admin dashboard
 
-hunt.db                      # Created automatically on first run
+.env.local.example          # Environment template
+.env.local                  # Add your MONGODB_URI here
 ```
-
-## Migration from localStorage
-
-All existing localStorage data can be imported. The application now:
-
-- Automatically fetches scores from database on startup
-- Saves scores to database instead of localStorage
-- Maintains full leaderboard functionality
 
 ## Setup & Running
 
+### Local Development
+
 ```bash
-# Install dependencies (if not already done)
+# Install dependencies
 npm install
+
+# Set up environment
+cp .env.local.example .env.local
+# Edit .env.local with your MongoDB connection string
 
 # Run development server
 npm run dev
-
-# Build for production
-npm run build
-npm start
 ```
 
-The database file (`hunt.db`) will be created automatically in the project root on first score submission.
+### Production (Vercel)
 
-## Security Notes
-
-1. **Admin Password**: Change the default password in `pages/scores-management.js`
-2. **Production**: Consider using environment variables for sensitive data
-3. **Backup**: Regularly backup the `hunt.db` file for important events
+1. Add `MONGODB_URI` to Vercel environment variables
+2. Push to main branch
+3. Vercel automatically deploys
 
 ## Troubleshooting
 
-### Database file not created
+### "Failed to load scores" on Vercel
 
-The database file is created automatically when the first score is saved. It won't exist until that happens.
+**Cause**: Missing or invalid `MONGODB_URI` environment variable
 
-### Can't access scores-management
+**Solution**:
 
-- Check the URL: `/scores-management`
+1. Check that `MONGODB_URI` is set in Vercel project settings
+2. Verify the connection string includes username:password
+3. Ensure IP is whitelisted in MongoDB Atlas (use 0.0.0.0/0 for Vercel)
+4. Check Vercel function logs for detailed errors
+
+### "Cannot find module 'mongoose'"
+
+**Solution**: Run `npm install` and rebuild
+
+### Scores not persisting
+
+**Cause**: Database connection issue
+
+**Solution**:
+
+1. Verify `MONGODB_URI` is correct
+2. Check MongoDB Atlas cluster status
+3. Confirm network access rules allow Vercel IPs
+
+### Admin panel says "Incorrect password"
+
 - Default password is: `admin123`
-- Edit the password in `pages/scores-management.js` if needed
+- Edit password in `pages/scores-management.js` line 10
 
-### API errors
+## Security Notes
 
-- Ensure the development server is running
-- Check browser console for detailed error messages
-- The database file should be readable/writable in the project directory
+1. **Change admin password**: Update line 10 in `scores-management.js`
+2. **IP Whitelisting**: For production, restrict MongoDB access to specific IPs if possible
+3. **Connection string**: Never commit `.env.local` to git (already in .gitignore)
+4. **Rate limiting**: Consider adding rate limiting for API endpoints
 
-## Future Enhancements
+## Free Tier Limits (MongoDB Atlas)
 
-Possible additions:
+- Storage: 512 MB
+- Connections: 500 concurrent
+- Sufficient for most scavenger hunts
 
-- Authentication system for admin panel
-- Backup/restore functionality
-- Statistics and analytics dashboard
-- Team-specific leaderboards
-- Score filtering and sorting options
+For larger deployments, upgrade to paid tier.
+
+## Migration from SQLite
+
+If you had the previous SQLite version:
+
+1. Scores are not automatically migrated (they were stored locally)
+2. Fresh start with new MongoDB database
+3. All future scores are persisted in MongoDB

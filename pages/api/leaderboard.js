@@ -19,10 +19,21 @@ export default async function handler(req, res) {
       const leaderboard = await getLeaderboard();
       res.status(200).json({ leaderboard });
     } catch (error) {
-      console.error("Error fetching scores:", error);
-      res
-        .status(500)
-        .json({ error: "Failed to fetch scores", details: error.message });
+      console.error("❌ Error fetching scores:", error.message);
+
+      if (error.message.includes("MONGODB_URI")) {
+        return res.status(500).json({
+          error: "Database not configured",
+          message:
+            "MONGODB_URI environment variable is missing. Add it to Vercel project settings.",
+          details: error.message,
+        });
+      }
+
+      res.status(500).json({
+        error: "Failed to fetch scores",
+        details: error.message,
+      });
     }
   } else {
     res.status(405).json({ error: "Method not allowed" });

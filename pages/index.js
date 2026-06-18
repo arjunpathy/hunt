@@ -218,7 +218,7 @@ export default function ScavengerHunt() {
           href="/admin"
           className="text-slate-500 hover:text-slate-300 text-sm mb-10 transition"
         >
-          ⚙ Admin: set Hunt Master face
+          ⚙ Admin Panel
         </a>
 
         {leaderboard.length > 0 && (

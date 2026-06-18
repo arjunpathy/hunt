@@ -4,20 +4,8 @@ import Webcam from "react-webcam";
 import * as mobilenet from "@tensorflow-models/mobilenet";
 import "@tensorflow/tfjs";
 import { shuffleItems } from "../lib/items";
-import { Camera, CheckCircle2, Trophy, Loader2, Medal } from "lucide-react";
+import { Camera, Trophy, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
-
-async function getLeaderboard() {
-  try {
-    const response = await fetch("/api/scores");
-    if (!response.ok) throw new Error("Failed to fetch leaderboard");
-    const data = await response.json();
-    return data.leaderboard || [];
-  } catch (error) {
-    console.error("Error fetching leaderboard:", error);
-    return [];
-  }
-}
 
 async function saveResult(team, timeTaken, errors) {
   try {
@@ -56,7 +44,6 @@ export default function ScavengerHunt() {
   const [errorCount, setErrorCount] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [finalResult, setFinalResult] = useState(null);
-  const [leaderboard, setLeaderboard] = useState([]);
   const [elapsed, setElapsed] = useState(0);
   const webcamRef = useRef(null);
 
@@ -68,7 +55,7 @@ export default function ScavengerHunt() {
     return () => clearInterval(interval);
   }, [gameStarted, startTime, currentIndex, questions.length]);
 
-  // Load AI Models and leaderboard on mount
+  // Load AI Models on mount
   useEffect(() => {
     const loadModels = async () => {
       const faceapi = await import("@vladmandic/face-api");
@@ -83,9 +70,6 @@ export default function ScavengerHunt() {
       setFaceModelsLoaded(true);
     };
     loadModels();
-
-    // Load leaderboard from database
-    getLeaderboard().then((board) => setLeaderboard(board));
   }, []);
 
   const startGame = () => {
@@ -143,13 +127,8 @@ export default function ScavengerHunt() {
         } else {
           confetti({ particleCount: 150, spread: 70 });
           const timeTaken = Math.round((Date.now() - startTime) / 1000);
-          const updatedBoard = await saveResult(
-            teamName,
-            timeTaken,
-            errorCount,
-          );
+          await saveResult(teamName, timeTaken, errorCount);
           setFinalResult({ timeTaken, errors: errorCount });
-          setLeaderboard(updatedBoard);
           setCurrentIndex(questions.length);
         }
       } else {
@@ -178,13 +157,8 @@ export default function ScavengerHunt() {
         } else {
           confetti({ particleCount: 150, spread: 70 });
           const timeTaken = Math.round((Date.now() - startTime) / 1000);
-          const updatedBoard = await saveResult(
-            teamName,
-            timeTaken,
-            errorCount,
-          );
+          await saveResult(teamName, timeTaken, errorCount);
           setFinalResult({ timeTaken, errors: errorCount });
-          setLeaderboard(updatedBoard);
           setCurrentIndex(questions.length);
         }
       } else {
@@ -214,62 +188,20 @@ export default function ScavengerHunt() {
         >
           START GAME
         </button>
-        <a
-          href="/admin"
-          className="text-slate-500 hover:text-slate-300 text-sm mb-10 transition"
-        >
-          ⚙ Admin Panel
-        </a>
-
-        {leaderboard.length > 0 && (
-          <div className="w-full max-w-sm">
-            <div className="flex items-center gap-2 mb-3">
-              <Medal size={20} className="text-yellow-400" />
-              <h2 className="text-lg font-bold text-yellow-400 uppercase tracking-wide">
-                Leaderboard
-              </h2>
-            </div>
-            <div className="rounded-xl overflow-hidden border border-slate-700">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-slate-800 text-slate-400 text-xs uppercase">
-                    <th className="px-3 py-2 text-left">#</th>
-                    <th className="px-3 py-2 text-left">Team</th>
-                    <th className="px-3 py-2 text-right">Time</th>
-                    <th className="px-3 py-2 text-right">Errors</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {leaderboard.map((entry, i) => (
-                    <tr
-                      key={i}
-                      className={`border-t border-slate-700 ${i === 0 ? "bg-yellow-900/30" : "bg-slate-800/50"}`}
-                    >
-                      <td className="px-3 py-2 font-bold text-slate-400">
-                        {i === 0
-                          ? "🥇"
-                          : i === 1
-                            ? "🥈"
-                            : i === 2
-                              ? "🥉"
-                              : i + 1}
-                      </td>
-                      <td className="px-3 py-2 font-semibold truncate max-w-[120px]">
-                        {entry.team}
-                      </td>
-                      <td className="px-3 py-2 text-right font-mono text-green-400">
-                        {formatTime(entry.timeTaken)}
-                      </td>
-                      <td className="px-3 py-2 text-right text-red-400">
-                        {entry.errors}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+        <div className="w-full max-w-sm grid grid-cols-2 gap-3 mb-10">
+          <a
+            href="/scores-management"
+            className="bg-slate-800 border border-slate-700 px-4 py-3 rounded-xl text-center font-semibold hover:bg-slate-700 transition"
+          >
+            Scores
+          </a>
+          <a
+            href="/admin"
+            className="bg-slate-800 border border-slate-700 px-4 py-3 rounded-xl text-center font-semibold hover:bg-slate-700 transition"
+          >
+            Admin
+          </a>
+        </div>
       </div>
     );
   }
@@ -294,55 +226,12 @@ export default function ScavengerHunt() {
           </div>
         )}
 
-        {leaderboard.length > 0 && (
-          <div className="w-full max-w-sm mb-8">
-            <div className="flex items-center gap-2 mb-3">
-              <Medal size={18} className="text-yellow-400" />
-              <h2 className="text-base font-bold text-yellow-400 uppercase tracking-wide">
-                Leaderboard
-              </h2>
-            </div>
-            <div className="rounded-xl overflow-hidden border border-white/20">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-black/30 text-white/60 text-xs uppercase">
-                    <th className="px-3 py-2 text-left">#</th>
-                    <th className="px-3 py-2 text-left">Team</th>
-                    <th className="px-3 py-2 text-right">Time</th>
-                    <th className="px-3 py-2 text-right">Errors</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {leaderboard.map((entry, i) => (
-                    <tr
-                      key={i}
-                      className={`border-t border-white/10 ${entry.team === teamName && entry.timeTaken === finalResult?.timeTaken ? "bg-yellow-500/20 font-bold" : "bg-black/20"}`}
-                    >
-                      <td className="px-3 py-2 text-white/60">
-                        {i === 0
-                          ? "🥇"
-                          : i === 1
-                            ? "🥈"
-                            : i === 2
-                              ? "🥉"
-                              : i + 1}
-                      </td>
-                      <td className="px-3 py-2 truncate max-w-[120px]">
-                        {entry.team}
-                      </td>
-                      <td className="px-3 py-2 text-right font-mono text-green-300">
-                        {formatTime(entry.timeTaken)}
-                      </td>
-                      <td className="px-3 py-2 text-right text-red-300">
-                        {entry.errors}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+        <a
+          href="/scores-management"
+          className="mb-6 bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-full font-semibold transition"
+        >
+          View Scores
+        </a>
 
         <button
           onClick={() => window.location.reload()}

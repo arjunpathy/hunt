@@ -7,22 +7,32 @@ import { shuffleItems } from "../lib/items";
 import { Camera, CheckCircle2, Trophy, Loader2, Medal } from "lucide-react";
 import confetti from "canvas-confetti";
 
-const LEADERBOARD_KEY = "office-hunt-leaderboard";
-
-function getLeaderboard() {
+async function getLeaderboard() {
   try {
-    return JSON.parse(localStorage.getItem(LEADERBOARD_KEY) || "[]");
-  } catch {
+    const response = await fetch("/api/scores");
+    if (!response.ok) throw new Error("Failed to fetch leaderboard");
+    const data = await response.json();
+    return data.leaderboard || [];
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
     return [];
   }
 }
 
-function saveResult(team, timeTaken, errors) {
-  const board = getLeaderboard();
-  board.push({ team, timeTaken, errors, completedAt: Date.now() });
-  board.sort((a, b) => a.timeTaken - b.timeTaken || a.errors - b.errors);
-  localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(board));
-  return board;
+async function saveResult(team, timeTaken, errors) {
+  try {
+    const response = await fetch("/api/scores", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ teamName: team, timeTaken, errors }),
+    });
+    if (!response.ok) throw new Error("Failed to save score");
+    const data = await response.json();
+    return data.leaderboard || [];
+  } catch (error) {
+    console.error("Error saving result:", error);
+    return [];
+  }
 }
 
 function formatTime(seconds) {
@@ -73,7 +83,9 @@ export default function ScavengerHunt() {
       setFaceModelsLoaded(true);
     };
     loadModels();
-    setLeaderboard(getLeaderboard());
+
+    // Load leaderboard from database
+    getLeaderboard().then((board) => setLeaderboard(board));
   }, []);
 
   const startGame = () => {
@@ -131,7 +143,11 @@ export default function ScavengerHunt() {
         } else {
           confetti({ particleCount: 150, spread: 70 });
           const timeTaken = Math.round((Date.now() - startTime) / 1000);
-          const updatedBoard = saveResult(teamName, timeTaken, errorCount);
+          const updatedBoard = await saveResult(
+            teamName,
+            timeTaken,
+            errorCount,
+          );
           setFinalResult({ timeTaken, errors: errorCount });
           setLeaderboard(updatedBoard);
           setCurrentIndex(questions.length);
@@ -162,7 +178,11 @@ export default function ScavengerHunt() {
         } else {
           confetti({ particleCount: 150, spread: 70 });
           const timeTaken = Math.round((Date.now() - startTime) / 1000);
-          const updatedBoard = saveResult(teamName, timeTaken, errorCount);
+          const updatedBoard = await saveResult(
+            teamName,
+            timeTaken,
+            errorCount,
+          );
           setFinalResult({ timeTaken, errors: errorCount });
           setLeaderboard(updatedBoard);
           setCurrentIndex(questions.length);

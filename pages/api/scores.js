@@ -1,21 +1,34 @@
-import { saveScore, getLeaderboard } from "../../lib/db";
+import { saveScore, getLeaderboard, getTeamBySession } from "../../lib/db";
+import { getSessionFromRequest } from "../../lib/teamSession";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
-      const { teamName, timeTaken, errors } = req.body;
+      const { timeTaken, errors } = req.body;
 
-      if (
-        !teamName ||
-        typeof timeTaken !== "number" ||
-        typeof errors !== "number"
-      ) {
+      if (typeof timeTaken !== "number" || typeof errors !== "number") {
         return res
           .status(400)
           .json({ error: "Missing or invalid required fields" });
       }
 
-      await saveScore(teamName, timeTaken, errors);
+      const session = getSessionFromRequest(req);
+      if (!session) {
+        return res.status(401).json({
+          error: "Unauthorized",
+          details: "Missing or invalid team session",
+        });
+      }
+
+      const team = await getTeamBySession(session.teamId, session.teamKey);
+      if (!team) {
+        return res.status(401).json({
+          error: "Unauthorized",
+          details: "Team session is invalid or expired",
+        });
+      }
+
+      await saveScore(team, timeTaken, errors);
       const leaderboard = await getLeaderboard();
 
       res.status(201).json({

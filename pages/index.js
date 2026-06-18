@@ -7,6 +7,16 @@ import { shuffleItems } from "../lib/items";
 import { Camera, Trophy, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 
+function normalizeTeamName(teamName) {
+  return String(teamName || "")
+    .trim()
+    .toLowerCase();
+}
+
+function getTeamKeyStorageKey(teamName) {
+  return `hunt-team-key:${normalizeTeamName(teamName)}`;
+}
+
 async function saveResult(team, timeTaken, errors) {
   try {
     const response = await fetch("/api/scores", {
@@ -45,6 +55,7 @@ export default function ScavengerHunt() {
   const [startTime, setStartTime] = useState(null);
   const [finalResult, setFinalResult] = useState(null);
   const [elapsed, setElapsed] = useState(0);
+  const [isStarting, setIsStarting] = useState(false);
   const webcamRef = useRef(null);
 
   useEffect(() => {
@@ -72,13 +83,49 @@ export default function ScavengerHunt() {
     loadModels();
   }, []);
 
-  const startGame = () => {
-    if (!teamName.trim()) return alert("Enter Team Name");
-    const teamQuestions = shuffleItems(teamName);
-    setQuestions(teamQuestions);
-    setErrorCount(0);
-    setStartTime(Date.now());
-    setGameStarted(true);
+  const startGame = async () => {
+    const cleanedTeamName = teamName.trim();
+    if (!cleanedTeamName) return alert("Enter Team Name");
+
+    try {
+      setIsStarting(true);
+      const teamStorageKey = getTeamKeyStorageKey(cleanedTeamName);
+      const existingTeamKey =
+        typeof window !== "undefined"
+          ? localStorage.getItem(teamStorageKey) || ""
+          : "";
+
+      const response = await fetch("/api/team-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          teamName: cleanedTeamName,
+          teamKey: existingTeamKey,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(
+          data.details || data.error || "Failed to start team session",
+        );
+      }
+
+      if (data.teamKey && typeof window !== "undefined") {
+        localStorage.setItem(teamStorageKey, data.teamKey);
+      }
+
+      const teamQuestions = shuffleItems(cleanedTeamName);
+      setQuestions(teamQuestions);
+      setErrorCount(0);
+      setStartTime(Date.now());
+      setGameStarted(true);
+      setTeamName(cleanedTeamName);
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setIsStarting(false);
+    }
   };
 
   const captureAndVerify = async () => {
@@ -184,9 +231,10 @@ export default function ScavengerHunt() {
         />
         <button
           onClick={startGame}
-          className="bg-blue-600 hover:bg-blue-500 px-8 py-4 rounded-xl font-bold w-full max-w-sm transition mb-4"
+          disabled={isStarting}
+          className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 px-8 py-4 rounded-xl font-bold w-full max-w-sm transition mb-4"
         >
-          START GAME
+          {isStarting ? "Starting..." : "START GAME"}
         </button>
         <div className="w-full max-w-sm grid grid-cols-2 gap-3 mb-10">
           <a

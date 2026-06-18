@@ -1,17 +1,39 @@
-import { getLeaderboard, getAllScores, getScoresByTeam } from "../../lib/db";
+import {
+  getLeaderboard,
+  getAllScores,
+  getScoresByTeam,
+  getTeamBySession,
+} from "../../lib/db";
+import { getSessionFromRequest } from "../../lib/teamSession";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
     try {
-      const { type = "leaderboard", teamName } = req.query;
+      const { type = "leaderboard" } = req.query;
 
       if (type === "all") {
         const scores = await getAllScores();
         return res.status(200).json({ scores });
       }
 
-      if (type === "team" && teamName) {
-        const scores = await getScoresByTeam(teamName);
+      if (type === "team") {
+        const session = getSessionFromRequest(req);
+        if (!session) {
+          return res.status(401).json({
+            error: "Unauthorized",
+            details: "Missing or invalid team session",
+          });
+        }
+
+        const team = await getTeamBySession(session.teamId, session.teamKey);
+        if (!team) {
+          return res.status(401).json({
+            error: "Unauthorized",
+            details: "Team session is invalid or expired",
+          });
+        }
+
+        const scores = await getScoresByTeam(team._id);
         return res.status(200).json({ scores });
       }
 

@@ -3,7 +3,7 @@ import Head from "next/head";
 import Webcam from "react-webcam";
 import * as mobilenet from "@tensorflow-models/mobilenet";
 import "@tensorflow/tfjs";
-import { shuffleItems } from "../lib/items";
+import { shuffleItems, getColleagueItems } from "../lib/items";
 import { Camera, Trophy, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -134,7 +134,24 @@ export default function ScavengerHunt() {
         localStorage.setItem(teamStorageKey, data.teamKey);
       }
 
-      const teamQuestions = shuffleItems(cleanedTeamName);
+      const officeItems = shuffleItems(cleanedTeamName);
+      const colleagueItems = await getColleagueItems();
+
+      // Mix colleagues into the game (up to 2 colleagues)
+      const teamQuestions = [...officeItems];
+      if (colleagueItems.length > 0) {
+        const numColleagueItems = Math.min(2, colleagueItems.length);
+        const selectedColleagues = colleagueItems
+          .sort(() => 0.5 - Math.random())
+          .slice(0, numColleagueItems);
+        // Replace some of the office items with colleague items
+        teamQuestions.splice(
+          teamQuestions.length - 1,
+          1,
+          ...selectedColleagues,
+        );
+      }
+
       setQuestions(teamQuestions);
       setErrorCount(0);
       setStartTime(Date.now());
@@ -200,6 +217,53 @@ export default function ScavengerHunt() {
       } else {
         setErrorCount((c) => c + 1);
         setMessage("Not quite. Try again!");
+      }
+      setIsLoading(false);
+      return;
+    }
+
+    if (currentItem.type === "colleague") {
+      const faceapi = faceapiRef.current;
+      if (!currentItem.faceDescriptor) {
+        setMessage("Colleague face descriptor not found.");
+        setIsLoading(false);
+        return;
+      }
+
+      const colleagueDescriptor = new Float32Array(currentItem.faceDescriptor);
+      const video = webcamRef.current.video;
+      const detection = await faceapi
+        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks(true)
+        .withFaceDescriptor();
+
+      if (!detection) {
+        setErrorCount((c) => c + 1);
+        setMessage("No face detected. Try again!");
+        setIsLoading(false);
+        return;
+      }
+
+      const distance = faceapi.euclideanDistance(
+        colleagueDescriptor,
+        detection.descriptor,
+      );
+      const found = distance < 0.5;
+      if (found) {
+        if (currentIndex + 1 < questions.length) {
+          confetti();
+          setCurrentIndex(currentIndex + 1);
+          setMessage("Correct! Find the next item.");
+        } else {
+          confetti({ particleCount: 150, spread: 70 });
+          const timeTaken = Math.round((Date.now() - startTime) / 1000);
+          await saveResult(teamName, timeTaken, errorCount);
+          setFinalResult({ timeTaken, errors: errorCount });
+          setCurrentIndex(questions.length);
+        }
+      } else {
+        setErrorCount((c) => c + 1);
+        setMessage(`Not quite. Try again! (Looking for ${currentItem.name})`);
       }
       setIsLoading(false);
       return;

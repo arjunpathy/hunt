@@ -42,6 +42,14 @@ export default function AdminPanel() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Colleagues state
+  const [colleagues, setColleagues] = useState([]);
+  const [colleaguesLoading, setColleaguesLoading] = useState(false);
+  const [colleagueName, setColleagueName] = useState("");
+  const colleagueWebcamRef = useRef(null);
+  const [isCapturingColleague, setIsCapturingColleague] = useState(false);
+  const [colleagueStatus, setColleagueStatus] = useState("");
+
   const ADMIN_PASSWORD = "admin123";
 
   useEffect(() => {
@@ -98,6 +106,87 @@ export default function AdminPanel() {
     setStatus(
       "Reference cleared. Capture a new photo to set a new Hunt Master.",
     );
+  };
+
+  const captureColleague = async () => {
+    if (!modelsLoaded || !colleagueWebcamRef.current) return;
+    if (!colleagueName.trim()) {
+      alert("Enter colleague name first");
+      return;
+    }
+
+    try {
+      setIsCapturingColleague(true);
+      setColleagueStatus("Detecting face...");
+
+      const faceapi = faceapiRef.current;
+      const video = colleagueWebcamRef.current.video;
+      const detection = await faceapi
+        .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks(true)
+        .withFaceDescriptor();
+
+      if (!detection) {
+        setColleagueStatus("No face detected. Try again!");
+        setIsCapturingColleague(false);
+        return;
+      }
+
+      const faceDescriptor = Array.from(detection.descriptor);
+      const response = await fetch("/api/colleagues", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: colleagueName.trim(),
+          faceDescriptor,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.details || data.error);
+      }
+
+      setColleagueStatus(`✅ Colleague "${colleagueName}" saved successfully!`);
+      setColleagueName("");
+      await fetchColleagues();
+      setIsCapturingColleague(false);
+    } catch (error) {
+      setColleagueStatus(`❌ Error: ${error.message}`);
+      setIsCapturingColleague(false);
+    }
+  };
+
+  const fetchColleagues = async () => {
+    try {
+      setColleaguesLoading(true);
+      const response = await fetch("/api/colleagues");
+      if (!response.ok) throw new Error("Failed to fetch colleagues");
+      const data = await response.json();
+      setColleagues(data.colleagues || []);
+    } catch (error) {
+      console.error("Error fetching colleagues:", error);
+      alert("Failed to load colleagues");
+    } finally {
+      setColleaguesLoading(false);
+    }
+  };
+
+  const deleteColleague = async (name) => {
+    if (!confirm(`Delete colleague "${name}"?`)) return;
+
+    try {
+      const response = await fetch("/api/colleagues", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+
+      if (!response.ok) throw new Error("Failed to delete colleague");
+      await fetchColleagues();
+    } catch (error) {
+      alert("Failed to delete colleague: " + error.message);
+    }
   };
 
   const fetchScores = async () => {
@@ -203,6 +292,19 @@ export default function AdminPanel() {
             }`}
           >
             Scores Management
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("colleagues");
+              fetchColleagues();
+            }}
+            className={`px-6 py-3 font-semibold transition border-b-2 ${
+              activeTab === "colleagues"
+                ? "text-blue-400 border-blue-400"
+                : "text-slate-400 border-transparent hover:text-slate-300"
+            }`}
+          >
+            Manage Colleagues
           </button>
         </div>
 
@@ -383,6 +485,123 @@ export default function AdminPanel() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Colleagues Tab */}
+        {activeTab === "colleagues" && (
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col items-center gap-6">
+              <div className="text-center max-w-sm">
+                <h2 className="text-2xl font-bold mb-2">Add Colleague</h2>
+                <p className="text-slate-400">
+                  Capture colleague photos to use as game answers
+                </p>
+              </div>
+
+              <input
+                type="text"
+                placeholder="Colleague name"
+                value={colleagueName}
+                onChange={(e) => setColleagueName(e.target.value)}
+                className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:border-blue-500 outline-none transition max-w-sm w-full"
+              />
+
+              <div className="relative rounded-3xl overflow-hidden border-4 border-slate-700 w-full max-w-sm aspect-square">
+                <Webcam
+                  audio={false}
+                  ref={colleagueWebcamRef}
+                  screenshotFormat="image/jpeg"
+                  videoConstraints={{ facingMode: "user" }}
+                  className="w-full h-full object-cover"
+                />
+                {!modelsLoaded && (
+                  <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-3">
+                    <Loader2 className="animate-spin" size={40} />
+                    <span className="text-sm text-slate-300">
+                      Loading models...
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <button
+                onClick={captureColleague}
+                disabled={isCapturingColleague || !modelsLoaded}
+                className="bg-blue-600 hover:bg-blue-500 disabled:bg-slate-600 px-6 py-3 rounded-lg font-bold transition flex items-center gap-2"
+              >
+                {isCapturingColleague ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Capturing...
+                  </>
+                ) : (
+                  <>
+                    <Camera size={18} />
+                    Capture & Save
+                  </>
+                )}
+              </button>
+
+              {colleagueStatus && (
+                <p
+                  className={`text-center text-sm ${
+                    colleagueStatus.startsWith("✅")
+                      ? "text-green-400"
+                      : colleagueStatus.startsWith("❌")
+                        ? "text-red-400"
+                        : "text-blue-400"
+                  }`}
+                >
+                  {colleagueStatus}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold">Saved Colleagues</h3>
+                <button
+                  onClick={fetchColleagues}
+                  className="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg transition text-sm"
+                >
+                  Refresh
+                </button>
+              </div>
+
+              {colleaguesLoading ? (
+                <div className="text-center text-slate-400">
+                  Loading colleagues...
+                </div>
+              ) : colleagues.length === 0 ? (
+                <div className="text-center text-slate-400 py-8 bg-slate-800 rounded-lg">
+                  No colleagues added yet
+                </div>
+              ) : (
+                <div className="grid gap-4 md:grid-cols-2">
+                  {colleagues.map((colleague) => (
+                    <div
+                      key={colleague._id}
+                      className="bg-slate-800 rounded-lg p-4 flex items-center justify-between"
+                    >
+                      <div>
+                        <p className="font-bold text-white">{colleague.name}</p>
+                        <p className="text-slate-500 text-xs">
+                          Face descriptor: {colleague.faceDescriptor.length}{" "}
+                          values
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => deleteColleague(colleague.name)}
+                        className="bg-red-600 hover:bg-red-500 p-2 rounded-lg transition"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

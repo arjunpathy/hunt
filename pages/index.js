@@ -17,6 +17,23 @@ function getTeamKeyStorageKey(teamName) {
   return `hunt-team-key:${normalizeTeamName(teamName)}`;
 }
 
+async function readApiResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    return await response.json();
+  }
+
+  const bodyText = await response.text();
+  return {
+    error: "Non-JSON response from server",
+    details:
+      bodyText && bodyText.trim().startsWith("<")
+        ? "Server returned an HTML error page. Check deployment/environment config."
+        : bodyText || "Unknown server response",
+  };
+}
+
 async function saveResult(team, timeTaken, errors) {
   try {
     const response = await fetch("/api/scores", {
@@ -24,8 +41,10 @@ async function saveResult(team, timeTaken, errors) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ teamName: team, timeTaken, errors }),
     });
-    if (!response.ok) throw new Error("Failed to save score");
-    const data = await response.json();
+    const data = await readApiResponse(response);
+    if (!response.ok) {
+      throw new Error(data.details || data.error || "Failed to save score");
+    }
     return data.leaderboard || [];
   } catch (error) {
     console.error("Error saving result:", error);
@@ -104,7 +123,7 @@ export default function ScavengerHunt() {
         }),
       });
 
-      const data = await response.json();
+      const data = await readApiResponse(response);
       if (!response.ok) {
         throw new Error(
           data.details || data.error || "Failed to start team session",

@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST="{\"pages/index.js -> @vladmandic/face-api\":{\"id\":\"pages/index.js -> @vladmandic/face-api\",\"files\":[\"static/chunks/node_modules_vladmandic_face-api_dist_face-api_esm_js.js\"]}}"

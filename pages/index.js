@@ -137,19 +137,15 @@ export default function ScavengerHunt() {
       const officeItems = await shuffleItems(cleanedTeamName);
       const colleagueItems = await getColleagueItems();
 
-      // Mix colleagues into the game (up to 2 colleagues)
+      // Mix colleagues into the game (up to 2 colleagues) while keeping Hunt Master last
       const teamQuestions = Array.isArray(officeItems) ? [...officeItems] : [];
       if (colleagueItems.length > 0) {
         const numColleagueItems = Math.min(2, colleagueItems.length);
         const selectedColleagues = colleagueItems
           .sort(() => 0.5 - Math.random())
           .slice(0, numColleagueItems);
-        // Replace some of the office items with colleague items
-        teamQuestions.splice(
-          teamQuestions.length - 1,
-          1,
-          ...selectedColleagues,
-        );
+        // Replace early regular slots so the final Hunt Master slot remains unchanged
+        teamQuestions.splice(0, numColleagueItems, ...selectedColleagues);
       }
 
       setQuestions(teamQuestions);
@@ -393,7 +389,8 @@ export default function ScavengerHunt() {
             Riddle {currentIndex + 1}:
           </h2>
           <h3 className="text-xl font-semibold text-blue-400 italic">
-            {questions[currentIndex]?.riddle}
+            {questions[currentIndex]?.riddle ||
+              "Find the target item or person."}
           </h3>
         </div>
 

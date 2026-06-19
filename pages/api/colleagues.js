@@ -25,17 +25,21 @@ async function readApiResponse(response) {
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
-      const { name, faceDescriptor } = req.body || {};
+      const { name, riddle, faceDescriptor } = req.body || {};
 
       if (!name || typeof name !== "string") {
         return res.status(400).json({ error: "Colleague name is required" });
+      }
+
+      if (!riddle || typeof riddle !== "string") {
+        return res.status(400).json({ error: "Riddle is required" });
       }
 
       if (!Array.isArray(faceDescriptor) || faceDescriptor.length === 0) {
         return res.status(400).json({ error: "Face descriptor is required" });
       }
 
-      const colleague = await saveColleague(name, faceDescriptor);
+      const colleague = await saveColleague(name, riddle, faceDescriptor);
 
       return res.status(200).json({
         success: true,

@@ -134,11 +134,11 @@ export default function ScavengerHunt() {
         localStorage.setItem(teamStorageKey, data.teamKey);
       }
 
-      const officeItems = shuffleItems(cleanedTeamName);
+      const officeItems = await shuffleItems(cleanedTeamName);
       const colleagueItems = await getColleagueItems();
 
       // Mix colleagues into the game (up to 2 colleagues)
-      const teamQuestions = [...officeItems];
+      const teamQuestions = Array.isArray(officeItems) ? [...officeItems] : [];
       if (colleagueItems.length > 0) {
         const numColleagueItems = Math.min(2, colleagueItems.length);
         const selectedColleagues = colleagueItems

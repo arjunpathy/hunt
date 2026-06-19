@@ -46,6 +46,7 @@ export default function AdminPanel() {
   const [colleagues, setColleagues] = useState([]);
   const [colleaguesLoading, setColleaguesLoading] = useState(false);
   const [colleagueName, setColleagueName] = useState("");
+  const [colleagueRiddle, setColleagueRiddle] = useState("");
   const colleagueWebcamRef = useRef(null);
   const [isCapturingColleague, setIsCapturingColleague] = useState(false);
   const [colleagueStatus, setColleagueStatus] = useState("");
@@ -114,6 +115,10 @@ export default function AdminPanel() {
       alert("Enter colleague name first");
       return;
     }
+    if (!colleagueRiddle.trim()) {
+      alert("Enter a riddle for the colleague");
+      return;
+    }
 
     try {
       setIsCapturingColleague(true);
@@ -138,6 +143,7 @@ export default function AdminPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: colleagueName.trim(),
+          riddle: colleagueRiddle.trim(),
           faceDescriptor,
         }),
       });
@@ -149,6 +155,7 @@ export default function AdminPanel() {
 
       setColleagueStatus(`✅ Colleague "${colleagueName}" saved successfully!`);
       setColleagueName("");
+      setColleagueRiddle("");
       await fetchColleagues();
       setIsCapturingColleague(false);
     } catch (error) {
@@ -507,6 +514,13 @@ export default function AdminPanel() {
                 className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:border-blue-500 outline-none transition max-w-sm w-full"
               />
 
+              <textarea
+                placeholder="Enter a riddle for this colleague (e.g., 'I love debugging code and drinking coffee')"
+                value={colleagueRiddle}
+                onChange={(e) => setColleagueRiddle(e.target.value)}
+                className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:border-blue-500 outline-none transition max-w-sm w-full h-24 resize-none"
+              />
+
               <div className="relative rounded-3xl overflow-hidden border-4 border-slate-700 w-full max-w-sm aspect-square">
                 <Webcam
                   audio={false}
@@ -582,10 +596,13 @@ export default function AdminPanel() {
                   {colleagues.map((colleague) => (
                     <div
                       key={colleague._id}
-                      className="bg-slate-800 rounded-lg p-4 flex items-center justify-between"
+                      className="bg-slate-800 rounded-lg p-4 flex flex-col justify-between"
                     >
                       <div>
-                        <p className="font-bold text-white">{colleague.name}</p>
+                        <p className="font-bold text-white mb-2">{colleague.name}</p>
+                        <p className="text-slate-300 text-sm mb-3 italic">
+                          "{colleague.riddle}"
+                        </p>
                         <p className="text-slate-500 text-xs">
                           Face descriptor: {colleague.faceDescriptor.length}{" "}
                           values
@@ -593,7 +610,7 @@ export default function AdminPanel() {
                       </div>
                       <button
                         onClick={() => deleteColleague(colleague.name)}
-                        className="bg-red-600 hover:bg-red-500 p-2 rounded-lg transition"
+                        className="bg-red-600 hover:bg-red-500 p-2 rounded-lg transition mt-3 flex items-center justify-center"
                       >
                         <Trash2 size={18} />
                       </button>

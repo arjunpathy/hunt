@@ -276,7 +276,7 @@ export default function AdminPanel() {
         <div className="max-w-md mx-auto pt-16">
           <div
             className="w-full p-8 rounded-lg"
-            style={{ backgroundColor: colors.primaryLighter }}
+            style={{ backgroundColor: colors.overlay }}
           >
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-bold">Admin Login</h1>
@@ -297,7 +297,7 @@ export default function AdminPanel() {
                 placeholder="Enter admin password"
                 className="w-full px-4 py-2 rounded-lg mb-4 focus:outline-none"
                 style={{
-                  backgroundColor: colors.primaryLightest,
+                  backgroundColor: colors.overlay,
                   color: colors.text,
                   border: `1px solid ${colors.primary}`,
                 }}
@@ -367,7 +367,7 @@ export default function AdminPanel() {
           {/* Tabs */}
           <div
             className="flex gap-4 mb-8"
-            style={{ borderBottom: `1px solid ${colors.primaryBorder}` }}
+            style={{ borderBottom: `1px solid ${colors.border}` }}
           >
             <button
               onClick={() => setActiveTab("hunt-master")}
@@ -429,7 +429,7 @@ export default function AdminPanel() {
 
               <div
                 className="relative rounded-3xl overflow-hidden w-full max-w-sm aspect-square mb-4"
-                style={{ border: `4px solid ${colors.primaryBorder}` }}
+                style={{ border: `4px solid ${colors.border}` }}
               >
                 <Webcam
                   audio={false}
@@ -441,7 +441,7 @@ export default function AdminPanel() {
                 {!modelsLoaded && (
                   <div
                     className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-                    style={{ backgroundColor: colors.blueOverlayLight }}
+                    style={{ backgroundColor: colors.overlay }}
                   >
                     <Loader2 className="animate-spin" size={40} />
                     <span
@@ -455,7 +455,7 @@ export default function AdminPanel() {
                 {saved && (
                   <div
                     className="absolute inset-0 flex items-center justify-center"
-                    style={{ backgroundColor: colors.blueOverlayLight }}
+                    style={{ backgroundColor: colors.overlay }}
                   >
                     <CheckCircle2 size={64} style={{ color: colors.accent }} />
                   </div>
@@ -564,7 +564,7 @@ export default function AdminPanel() {
                     className="text-center py-8 rounded-lg"
                     style={{
                       color: colors.secondaryText,
-                      backgroundColor: colors.primaryLighter,
+                      backgroundColor: colors.overlay,
                     }}
                   >
                     No scores yet
@@ -572,14 +572,14 @@ export default function AdminPanel() {
                 ) : (
                   <div
                     className="rounded-lg overflow-hidden"
-                    style={{ border: `1px solid ${colors.primaryBorder}` }}
+                    style={{ border: `1px solid ${colors.border}` }}
                   >
                     <table className="w-full">
                       <thead>
                         <tr
                           className="text-sm"
                           style={{
-                            backgroundColor: colors.primaryLight,
+                            backgroundColor: colors.overlay,
                             color: colors.secondaryText,
                           }}
                         >
@@ -596,11 +596,11 @@ export default function AdminPanel() {
                             key={index}
                             className="transition"
                             style={{
-                              borderTop: `1px solid ${colors.primaryBorder}`,
+                              borderTop: `1px solid ${colors.border}`,
                             }}
                             onMouseEnter={(e) =>
                               (e.currentTarget.style.backgroundColor =
-                                colors.primaryLightest)
+                                colors.overlay)
                             }
                             onMouseLeave={(e) =>
                               (e.currentTarget.style.backgroundColor =
@@ -644,9 +644,9 @@ export default function AdminPanel() {
                 <div
                   className="mt-8 p-4 rounded-lg text-sm"
                   style={{
-                    backgroundColor: colors.accentLight,
+                    backgroundColor: colors.overlay,
                     color: colors.secondaryText,
-                    border: `1px solid ${colors.accentBorder}`,
+                    border: `1px solid ${colors.border}`,
                   }}
                 >
                   <p>Total scores: {scores.length}</p>
@@ -673,7 +673,7 @@ export default function AdminPanel() {
                   onChange={(e) => setColleagueName(e.target.value)}
                   className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full"
                   style={{
-                    backgroundColor: colors.primaryLightest,
+                    backgroundColor: colors.overlay,
                     color: colors.text,
                     border: `1px solid ${colors.primary}`,
                   }}
@@ -687,7 +687,7 @@ export default function AdminPanel() {
                   onChange={(e) => setColleagueRiddle(e.target.value)}
                   className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full h-24 resize-none"
                   style={{
-                    backgroundColor: colors.primaryLightest,
+                    backgroundColor: colors.overlay,
                     color: colors.text,
                     border: `1px solid ${colors.primary}`,
                   }}
@@ -697,7 +697,7 @@ export default function AdminPanel() {
 
                 <div
                   className="relative rounded-3xl overflow-hidden w-full max-w-sm aspect-square"
-                  style={{ border: `4px solid ${colors.primaryBorder}` }}
+                  style={{ border: `4px solid ${colors.border}` }}
                 >
                   <Webcam
                     audio={false}
@@ -709,7 +709,7 @@ export default function AdminPanel() {
                   {!modelsLoaded && (
                     <div
                       className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-                      style={{ backgroundColor: colors.darkOverlayLight }}
+                      style={{ backgroundColor: colors.overlay }}
                     >
                       <Loader2 className="animate-spin" size={40} />
                       <span
@@ -774,17 +774,17 @@ export default function AdminPanel() {
                     onClick={fetchColleagues}
                     className="px-4 py-2 rounded-lg transition text-sm"
                     style={{
-                      backgroundColor: colors.accentLight,
+                      backgroundColor: colors.overlay,
                       color: colors.accent,
-                      border: `1px solid ${colors.accentBorder}`,
+                      border: `1px solid ${colors.border}`,
                     }}
                     onMouseEnter={(e) =>
                       (e.currentTarget.style.backgroundColor =
-                        colors.accentMedium)
+                        colors.accentDark)
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor =
-                        colors.accentLight)
+                        colors.overlay)
                     }
                   >
                     Refresh
@@ -803,7 +803,7 @@ export default function AdminPanel() {
                     className="text-center py-8 rounded-lg"
                     style={{
                       color: colors.secondaryText,
-                      backgroundColor: colors.primaryLighter,
+                      backgroundColor: colors.overlay,
                     }}
                   >
                     No colleagues added yet
@@ -815,8 +815,8 @@ export default function AdminPanel() {
                         key={colleague._id}
                         className="rounded-lg p-4 flex flex-col justify-between border"
                         style={{
-                          backgroundColor: colors.primaryLight,
-                          borderColor: colors.primaryBorder,
+                          backgroundColor: colors.overlay,
+                          borderColor: colors.border,
                         }}
                       >
                         <div>
@@ -834,7 +834,7 @@ export default function AdminPanel() {
                           </p>
                           <p
                             className="text-xs"
-                            style={{ color: colors.tertiaryText }}
+                            style={{ color: colors.secondaryText }}
                           >
                             Face descriptor: {colleague.faceDescriptor.length}{" "}
                             values

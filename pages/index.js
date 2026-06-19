@@ -475,17 +475,17 @@ export default function ScavengerHunt() {
         style={{ backgroundColor: colors.background, color: colors.text }}
       >
         <h1 className="text-4xl font-bold mt-10 mb-8 text-center">
-          Office Scavenger Hunt
+          Level Hunt
         </h1>
         {savedState && (
           <div
             className="mb-6 p-4 rounded-lg max-w-sm w-full text-center border"
             style={{
-              backgroundColor: colors.primaryLighter,
+              backgroundColor: colors.overlay,
               border: `1px solid ${colors.primary}`,
             }}
           >
-            <p className="text-sm mb-3" style={{ color: colors.infoText }}>
+            <p className="text-sm mb-3" style={{ color: colors.secondaryText }}>
               You have an unfinished game from{" "}
               <strong>{savedState.teamName}</strong>
             </p>
@@ -509,14 +509,14 @@ export default function ScavengerHunt() {
               onClick={resetAndGoHome}
               className="w-full px-4 py-2 rounded-lg transition text-sm"
               style={{
-                backgroundColor: colors.accentLighter,
+                backgroundColor: colors.overlay,
                 color: colors.secondaryText,
               }}
               onMouseEnter={(e) =>
-                (e.target.style.backgroundColor = colors.accentMedium)
+                (e.target.style.backgroundColor = colors.accentDark)
               }
               onMouseLeave={(e) =>
-                (e.target.style.backgroundColor = colors.accentLighter)
+                (e.target.style.backgroundColor = colors.overlay)
               }
             >
               Start New Game
@@ -526,7 +526,7 @@ export default function ScavengerHunt() {
         <input
           className="p-4 rounded-xl w-full max-w-sm mb-4 focus:outline-none"
           style={{
-            backgroundColor: colors.primaryLightest,
+            backgroundColor: colors.overlay,
             color: colors.text,
             border: `1px solid ${colors.primary}`,
           }}
@@ -561,15 +561,15 @@ export default function ScavengerHunt() {
             href="/scores-management"
             className="px-4 py-3 rounded-xl text-center font-semibold transition border"
             style={{
-              backgroundColor: colors.primaryLighter,
+              backgroundColor: colors.overlay,
               color: colors.text,
-              border: `1px solid ${colors.primaryBorder}`,
+              border: `1px solid ${colors.border}`,
             }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = colors.primaryWash)
+              (e.currentTarget.style.backgroundColor = colors.primaryDark)
             }
             onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = colors.primaryLighter)
+              (e.currentTarget.style.backgroundColor = colors.overlay)
             }
           >
             Scores
@@ -578,15 +578,15 @@ export default function ScavengerHunt() {
             href="/admin"
             className="px-4 py-3 rounded-xl text-center font-semibold transition border"
             style={{
-              backgroundColor: colors.primaryLighter,
+              backgroundColor: colors.overlay,
               color: colors.text,
-              border: `1px solid ${colors.primaryBorder}`,
+              border: `1px solid ${colors.border}`,
             }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = colors.primaryWash)
+              (e.currentTarget.style.backgroundColor = colors.primaryDark)
             }
             onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = colors.primaryLighter)
+              (e.currentTarget.style.backgroundColor = colors.overlay)
             }
           >
             Admin
@@ -626,15 +626,15 @@ export default function ScavengerHunt() {
           href="/scores-management"
           className="mb-6 px-5 py-2 rounded-full font-semibold transition"
           style={{
-            backgroundColor: colors.primaryLighter,
+            backgroundColor: colors.overlay,
             color: colors.primary,
-            border: `1px solid ${colors.primaryBorder}`,
+            border: `1px solid ${colors.border}`,
           }}
           onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = colors.primaryWash)
+            (e.currentTarget.style.backgroundColor = colors.primaryDark)
           }
           onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = colors.primaryLighter)
+            (e.currentTarget.style.backgroundColor = colors.overlay)
           }
         >
           View Scores
@@ -662,7 +662,7 @@ export default function ScavengerHunt() {
     >
       <div
         className="p-4 flex justify-between items-center"
-        style={{ backgroundColor: colors.primarySubtle }}
+        style={{ backgroundColor: colors.overlay }}
       >
         <span className="font-bold">
           {currentIndex + 1}/{questions.length}
@@ -679,15 +679,15 @@ export default function ScavengerHunt() {
             onClick={exitGame}
             className="px-3 py-1 rounded-lg text-sm font-semibold transition"
             style={{
-              backgroundColor: colors.accentWash,
+              backgroundColor: colors.overlay,
               color: colors.accent,
               border: `1px solid ${colors.accent}`,
             }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = colors.accentDarker)
+              (e.currentTarget.style.backgroundColor = colors.accentDark)
             }
             onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = colors.accentWash)
+              (e.currentTarget.style.backgroundColor = colors.overlay)
             }
           >
             Exit
@@ -711,7 +711,7 @@ export default function ScavengerHunt() {
 
         <div
           className="relative rounded-3xl overflow-hidden w-full max-w-md aspect-square"
-          style={{ border: `4px solid ${colors.primaryBorder}` }}
+          style={{ border: `4px solid ${colors.border}` }}
         >
           <Webcam
             audio={false}
@@ -723,7 +723,7 @@ export default function ScavengerHunt() {
           {isLoading && (
             <div
               className="absolute inset-0 flex items-center justify-center"
-              style={{ backgroundColor: colors.blueOverlay }}
+              style={{ backgroundColor: colors.overlay }}
             >
               <Loader2 className="animate-spin" size={48} />
             </div>

@@ -168,6 +168,57 @@ export default function ScavengerHunt() {
   const [isStarting, setIsStarting] = useState(false);
   const webcamRef = useRef(null);
 
+  const clearPlayerLocalData = (activeTeamName) => {
+    if (typeof window === "undefined") return;
+
+    try {
+      clearGameState();
+
+      const keyToRemove = getTeamKeyStorageKey(activeTeamName || "");
+      if (activeTeamName) {
+        localStorage.removeItem(keyToRemove);
+      }
+
+      const keys = Object.keys(localStorage);
+      keys.forEach((key) => {
+        if (key.startsWith("hunt-team-key:")) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (error) {
+      console.error("Failed to clear player local data:", error);
+    }
+  };
+
+  const exitGame = async () => {
+    const confirmed = confirm(
+      "Exit game? This will clear your progress and team session.",
+    );
+    if (!confirmed) return;
+
+    clearPlayerLocalData(teamName);
+
+    try {
+      await fetch("/api/team-session", { method: "DELETE" });
+    } catch (error) {
+      console.error("Failed to clear team session:", error);
+    } finally {
+      window.location.href = "/";
+    }
+  };
+
+  const resetAndGoHome = async () => {
+    clearPlayerLocalData(teamName);
+
+    try {
+      await fetch("/api/team-session", { method: "DELETE" });
+    } catch (error) {
+      console.error("Failed to clear team session:", error);
+    } finally {
+      window.location.href = "/";
+    }
+  };
+
   // Restore game state on mount
   useEffect(() => {
     const saved = loadGameState();
@@ -455,10 +506,7 @@ export default function ScavengerHunt() {
               📋 Resume Game
             </button>
             <button
-              onClick={() => {
-                clearGameState();
-                window.location.reload();
-              }}
+              onClick={resetAndGoHome}
               className="w-full px-4 py-2 rounded-lg transition text-sm"
               style={{
                 backgroundColor: colors.accentLighter,
@@ -593,10 +641,7 @@ export default function ScavengerHunt() {
         </a>
 
         <button
-          onClick={() => {
-            clearGameState();
-            window.location.reload();
-          }}
+          onClick={resetAndGoHome}
           className="px-6 py-2 rounded-full font-bold"
           style={{ backgroundColor: colors.accent, color: colors.background }}
           onMouseEnter={(e) =>
@@ -631,11 +676,7 @@ export default function ScavengerHunt() {
             <span style={{ color: colors.primary }}>{teamName}</span>
           </span>
           <button
-            onClick={() => {
-              if (confirm("Exit game? Your progress will be saved.")) {
-                window.location.href = "/";
-              }
-            }}
+            onClick={exitGame}
             className="px-3 py-1 rounded-lg text-sm font-semibold transition"
             style={{
               backgroundColor: colors.accentWash,

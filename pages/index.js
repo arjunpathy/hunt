@@ -679,15 +679,15 @@ export default function ScavengerHunt() {
             onClick={exitGame}
             className="px-3 py-1 rounded-lg text-sm font-semibold transition"
             style={{
-              backgroundColor: colors.overlay,
-              color: colors.accent,
+              backgroundColor: colors.primary,
+              color: colors.background,
               border: `1px solid ${colors.accent}`,
             }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = colors.accentDark)
+              (e.currentTarget.style.backgroundColor = colors.primaryDark)
             }
             onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = colors.overlay)
+              (e.currentTarget.style.backgroundColor = colors.primary)
             }
           >
             Exit

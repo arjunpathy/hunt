@@ -10,6 +10,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import { colors } from "../lib/colors";
 
 const DESCRIPTOR_KEY = "hunt-master-descriptor";
 
@@ -268,12 +269,12 @@ export default function AdminPanel() {
   return (
     <div
       className="min-h-screen p-6"
-      style={{ backgroundColor: "#181818", color: "#fdf7de" }}
+      style={{ backgroundColor: colors.background, color: colors.text }}
     >
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Admin Panel</h1>
-          <a href="/" className="transition" style={{ color: "#0079ff" }}>
+          <a href="/" className="transition" style={{ color: colors.primary }}>
             ← Back to Game
           </a>
         </div>
@@ -281,15 +282,18 @@ export default function AdminPanel() {
         {/* Tabs */}
         <div
           className="flex gap-4 mb-8"
-          style={{ borderBottom: "1px solid #333333" }}
+          style={{ borderBottom: `1px solid ${colors.primaryBorder}` }}
         >
           <button
             onClick={() => setActiveTab("hunt-master")}
             className="px-6 py-3 font-semibold transition border-b-2"
             style={{
-              color: activeTab === "hunt-master" ? "#0079ff" : "#999999",
+              color:
+                activeTab === "hunt-master"
+                  ? colors.primary
+                  : colors.secondaryText,
               borderBottomColor:
-                activeTab === "hunt-master" ? "#0079ff" : "transparent",
+                activeTab === "hunt-master" ? colors.primary : "transparent",
             }}
           >
             Hunt Master Setup
@@ -298,9 +302,10 @@ export default function AdminPanel() {
             onClick={() => setActiveTab("scores")}
             className="px-6 py-3 font-semibold transition border-b-2"
             style={{
-              color: activeTab === "scores" ? "#0079ff" : "#999999",
+              color:
+                activeTab === "scores" ? colors.primary : colors.secondaryText,
               borderBottomColor:
-                activeTab === "scores" ? "#0079ff" : "transparent",
+                activeTab === "scores" ? colors.primary : "transparent",
             }}
           >
             Scores Management
@@ -312,9 +317,12 @@ export default function AdminPanel() {
             }}
             className="px-6 py-3 font-semibold transition border-b-2"
             style={{
-              color: activeTab === "colleagues" ? "#0079ff" : "#999999",
+              color:
+                activeTab === "colleagues"
+                  ? colors.primary
+                  : colors.secondaryText,
               borderBottomColor:
-                activeTab === "colleagues" ? "#0079ff" : "transparent",
+                activeTab === "colleagues" ? colors.primary : "transparent",
             }}
           >
             Manage Colleagues
@@ -326,7 +334,7 @@ export default function AdminPanel() {
           <div className="flex flex-col items-center">
             <p
               className="mb-8 text-center max-w-sm"
-              style={{ color: "#999999" }}
+              style={{ color: colors.secondaryText }}
             >
               Capture your face so participants must find <strong>you</strong>{" "}
               during the hunt.
@@ -334,7 +342,7 @@ export default function AdminPanel() {
 
             <div
               className="relative rounded-3xl overflow-hidden w-full max-w-sm aspect-square mb-4"
-              style={{ border: "4px solid #333333" }}
+              style={{ border: `4px solid ${colors.primaryBorder}` }}
             >
               <Webcam
                 audio={false}
@@ -346,10 +354,13 @@ export default function AdminPanel() {
               {!modelsLoaded && (
                 <div
                   className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-                  style={{ backgroundColor: "rgba(0, 121, 255, 0.1)" }}
+                  style={{ backgroundColor: colors.blueOverlayLight }}
                 >
                   <Loader2 className="animate-spin" size={40} />
-                  <span className="text-sm" style={{ color: "#999999" }}>
+                  <span
+                    className="text-sm"
+                    style={{ color: colors.secondaryText }}
+                  >
                     Loading models...
                   </span>
                 </div>
@@ -357,16 +368,16 @@ export default function AdminPanel() {
               {saved && (
                 <div
                   className="absolute inset-0 flex items-center justify-center"
-                  style={{ backgroundColor: "rgba(0, 121, 255, 0.3)" }}
+                  style={{ backgroundColor: colors.blueOverlayLight }}
                 >
-                  <CheckCircle2 size={64} style={{ color: "#fece00" }} />
+                  <CheckCircle2 size={64} style={{ color: colors.accent }} />
                 </div>
               )}
             </div>
 
             <p
               className="mb-6 text-center text-sm"
-              style={{ color: saved ? "#fece00" : "#999999" }}
+              style={{ color: saved ? colors.accent : colors.secondaryText }}
             >
               {status}
             </p>
@@ -375,9 +386,16 @@ export default function AdminPanel() {
               onClick={capture}
               disabled={!modelsLoaded || isCapturing}
               className="disabled:opacity-50 px-8 py-4 rounded-xl font-bold w-full max-w-sm transition flex items-center justify-center gap-3 mb-4"
-              style={{ backgroundColor: "#0079ff", color: "#181818" }}
-              onMouseEnter={(e) => (e.target.style.backgroundColor = "#0066dd")}
-              onMouseLeave={(e) => (e.target.style.backgroundColor = "#0079ff")}
+              style={{
+                backgroundColor: colors.primary,
+                color: colors.background,
+              }}
+              onMouseEnter={(e) =>
+                (e.target.style.backgroundColor = colors.primaryDark)
+              }
+              onMouseLeave={(e) =>
+                (e.target.style.backgroundColor = colors.primary)
+              }
             >
               {isCapturing ? (
                 <Loader2 className="animate-spin" size={20} />
@@ -391,7 +409,7 @@ export default function AdminPanel() {
               <button
                 onClick={clear}
                 className="flex items-center gap-2 text-sm transition"
-                style={{ color: "#fece00" }}
+                style={{ color: colors.accent }}
               >
                 <Trash2 size={16} />
                 Clear saved face
@@ -408,7 +426,7 @@ export default function AdminPanel() {
                 <form
                   onSubmit={handleLogin}
                   className="w-full max-w-md p-8 rounded-lg"
-                  style={{ backgroundColor: "rgba(0, 121, 255, 0.08)" }}
+                  style={{ backgroundColor: colors.primaryLighter }}
                 >
                   <h2 className="text-2xl font-bold mb-6">Scores Management</h2>
                   <input
@@ -418,30 +436,37 @@ export default function AdminPanel() {
                     placeholder="Enter admin password"
                     className="w-full px-4 py-2 rounded-lg mb-4 focus:outline-none"
                     style={{
-                      backgroundColor: "rgba(0, 121, 255, 0.1)",
-                      color: "#fdf7de",
-                      border: "1px solid #0079ff",
+                      backgroundColor: colors.primaryLightest,
+                      color: colors.text,
+                      border: `1px solid ${colors.primary}`,
                     }}
-                    onFocus={(e) => (e.target.style.borderColor = "#0079ff")}
-                    onBlur={(e) => (e.target.style.borderColor = "#444444")}
+                    onFocus={(e) =>
+                      (e.target.style.borderColor = colors.primary)
+                    }
+                    onBlur={(e) =>
+                      (e.target.style.borderColor = colors.primary)
+                    }
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="text-sm mb-4"
-                    style={{ color: "#999999" }}
+                    style={{ color: colors.secondaryText }}
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                   <button
                     type="submit"
                     className="w-full py-2 rounded-lg font-bold transition"
-                    style={{ backgroundColor: "#0079ff", color: "#181818" }}
+                    style={{
+                      backgroundColor: colors.primary,
+                      color: colors.background,
+                    }}
                     onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#0066dd")
+                      (e.target.style.backgroundColor = colors.primaryDark)
                     }
                     onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "#0079ff")
+                      (e.target.style.backgroundColor = colors.primary)
                     }
                   >
                     Login
@@ -452,18 +477,21 @@ export default function AdminPanel() {
               <div>
                 <div
                   className="flex justify-between items-center mb-8"
-                  style={{ color: "#fdf7de" }}
+                  style={{ color: colors.text }}
                 >
                   <h2 className="text-2xl font-bold">All Scores</h2>
                   <button
                     onClick={handleLogout}
                     className="px-4 py-2 rounded-lg transition"
-                    style={{ backgroundColor: "#fece00", color: "#181818" }}
+                    style={{
+                      backgroundColor: colors.accent,
+                      color: colors.background,
+                    }}
                     onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#f5b300")
+                      (e.target.style.backgroundColor = colors.accentDark)
                     }
                     onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "#fece00")
+                      (e.target.style.backgroundColor = colors.accent)
                     }
                   >
                     Logout
@@ -474,12 +502,15 @@ export default function AdminPanel() {
                   <button
                     onClick={fetchScores}
                     className="px-4 py-2 rounded-lg transition"
-                    style={{ backgroundColor: "#0079ff", color: "#181818" }}
+                    style={{
+                      backgroundColor: colors.primary,
+                      color: colors.background,
+                    }}
                     onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#0066dd")
+                      (e.target.style.backgroundColor = colors.primaryDark)
                     }
                     onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "#0079ff")
+                      (e.target.style.backgroundColor = colors.primary)
                     }
                   >
                     Refresh
@@ -487,12 +518,15 @@ export default function AdminPanel() {
                   <button
                     onClick={exportToCSV}
                     className="px-4 py-2 rounded-lg flex items-center gap-2 transition"
-                    style={{ backgroundColor: "#fece00", color: "#181818" }}
+                    style={{
+                      backgroundColor: colors.accent,
+                      color: colors.background,
+                    }}
                     onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = "#f5b300")
+                      (e.target.style.backgroundColor = colors.accentDark)
                     }
                     onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = "#fece00")
+                      (e.target.style.backgroundColor = colors.accent)
                     }
                   >
                     <Download size={18} />
@@ -503,29 +537,32 @@ export default function AdminPanel() {
                 {scoresLoading ? (
                   <div
                     className="text-center py-8"
-                    style={{ color: "#999999" }}
+                    style={{ color: colors.secondaryText }}
                   >
                     Loading scores...
                   </div>
                 ) : scores.length === 0 ? (
                   <div
                     className="text-center py-8 rounded-lg"
-                    style={{ color: "#999999", backgroundColor: "rgba(0, 121, 255, 0.08)" }}
+                    style={{
+                      color: colors.secondaryText,
+                      backgroundColor: colors.primaryLighter,
+                    }}
                   >
                     No scores yet
                   </div>
                 ) : (
                   <div
                     className="rounded-lg overflow-hidden"
-                    style={{ border: "1px solid #333333" }}
+                    style={{ border: `1px solid ${colors.primaryBorder}` }}
                   >
                     <table className="w-full">
                       <thead>
                         <tr
                           className="text-sm"
                           style={{
-                            backgroundColor: "rgba(0, 121, 255, 0.05)",
-                            color: "#999999",
+                            backgroundColor: colors.primaryLight,
+                            color: colors.secondaryText,
                           }}
                         >
                           <th className="px-4 py-3 text-left">Team Name</th>
@@ -540,7 +577,9 @@ export default function AdminPanel() {
                           <tr
                             key={index}
                             className="transition"
-                            style={{ borderTop: "1px solid #333333" }}
+                            style={{
+                              borderTop: `1px solid ${colors.primaryBorder}`,
+                            }}
                             onMouseEnter={(e) =>
                               (e.currentTarget.style.backgroundColor =
                                 "rgba(0, 121, 255, 0.1)")
@@ -555,7 +594,7 @@ export default function AdminPanel() {
                             </td>
                             <td
                               className="px-4 py-3 text-right font-mono"
-                              style={{ color: "#fece00" }}
+                              style={{ color: colors.accent }}
                             >
                               {formatTime(score.timeTaken)}
                             </td>
@@ -586,7 +625,11 @@ export default function AdminPanel() {
 
                 <div
                   className="mt-8 p-4 rounded-lg text-sm"
-                  style={{ backgroundColor: "rgba(254, 206, 0, 0.08)", color: "#999999", border: "1px solid rgba(254, 206, 0, 0.2)" }}
+                  style={{
+                    backgroundColor: colors.accentLight,
+                    color: colors.secondaryText,
+                    border: `1px solid ${colors.accentBorder}`,
+                  }}
                 >
                   <p>Total scores: {scores.length}</p>
                 </div>
@@ -601,7 +644,7 @@ export default function AdminPanel() {
             <div className="flex flex-col items-center gap-6">
               <div className="text-center max-w-sm">
                 <h2 className="text-2xl font-bold mb-2">Add Colleague</h2>
-                <p style={{ color: "#999999" }}>
+                <p style={{ color: colors.secondaryText }}>
                   Capture colleague photos to use as game answers
                 </p>
               </div>
@@ -613,12 +656,12 @@ export default function AdminPanel() {
                 onChange={(e) => setColleagueName(e.target.value)}
                 className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full"
                 style={{
-                  backgroundColor: "rgba(0, 121, 255, 0.1)",
-                  color: "#fdf7de",
-                  border: "1px solid #0079ff",
+                  backgroundColor: colors.primaryLightest,
+                  color: colors.text,
+                  border: `1px solid ${colors.primary}`,
                 }}
-                onFocus={(e) => (e.target.style.borderColor = "#0079ff")}
-                onBlur={(e) => (e.target.style.borderColor = "#444444")}
+                onFocus={(e) => (e.target.style.borderColor = colors.primary)}
+                onBlur={(e) => (e.target.style.borderColor = colors.primary)}
               />
 
               <textarea
@@ -627,17 +670,17 @@ export default function AdminPanel() {
                 onChange={(e) => setColleagueRiddle(e.target.value)}
                 className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full h-24 resize-none"
                 style={{
-                  backgroundColor: "rgba(0, 121, 255, 0.1)",
-                  color: "#fdf7de",
-                  border: "1px solid #0079ff",
+                  backgroundColor: colors.primaryLightest,
+                  color: colors.text,
+                  border: `1px solid ${colors.primary}`,
                 }}
-                onFocus={(e) => (e.target.style.borderColor = "#0079ff")}
-                onBlur={(e) => (e.target.style.borderColor = "#444444")}
+                onFocus={(e) => (e.target.style.borderColor = colors.primary)}
+                onBlur={(e) => (e.target.style.borderColor = colors.primary)}
               />
 
               <div
                 className="relative rounded-3xl overflow-hidden w-full max-w-sm aspect-square"
-                style={{ border: "4px solid #333333" }}
+                style={{ border: `4px solid ${colors.primaryBorder}` }}
               >
                 <Webcam
                   audio={false}
@@ -649,10 +692,13 @@ export default function AdminPanel() {
                 {!modelsLoaded && (
                   <div
                     className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-                    style={{ backgroundColor: "rgba(24, 24, 24, 0.85)" }}
+                    style={{ backgroundColor: colors.darkOverlayLight }}
                   >
                     <Loader2 className="animate-spin" size={40} />
-                    <span className="text-sm" style={{ color: "#999999" }}>
+                    <span
+                      className="text-sm"
+                      style={{ color: colors.secondaryText }}
+                    >
                       Loading models...
                     </span>
                   </div>
@@ -663,13 +709,16 @@ export default function AdminPanel() {
                 onClick={captureColleague}
                 disabled={isCapturingColleague || !modelsLoaded}
                 className="disabled:opacity-50 px-6 py-3 rounded-lg font-bold transition flex items-center gap-2"
-                style={{ backgroundColor: "#0079ff", color: "#181818" }}
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.background,
+                }}
                 onMouseEnter={(e) =>
                   !e.currentTarget.disabled &&
-                  (e.currentTarget.style.backgroundColor = "#0066dd")
+                  (e.currentTarget.style.backgroundColor = colors.primaryDark)
                 }
                 onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor = "#0079ff")
+                  (e.currentTarget.style.backgroundColor = colors.primary)
                 }
               >
                 {isCapturingColleague ? (
@@ -690,10 +739,10 @@ export default function AdminPanel() {
                   className="text-center text-sm"
                   style={{
                     color: colleagueStatus.startsWith("✅")
-                      ? "#fece00"
+                      ? colors.accent
                       : colleagueStatus.startsWith("❌")
                         ? "#ff6b6b"
-                        : "#0079ff",
+                        : colors.primary,
                   }}
                 >
                   {colleagueStatus}
@@ -707,12 +756,17 @@ export default function AdminPanel() {
                 <button
                   onClick={fetchColleagues}
                   className="px-4 py-2 rounded-lg transition text-sm"
-                  style={{ backgroundColor: "rgba(254, 206, 0, 0.15)", color: "#181818", border: "1px solid rgba(254, 206, 0, 0.3)" }}
+                  style={{
+                    backgroundColor: colors.accentLight,
+                    color: colors.accent,
+                    border: `1px solid ${colors.accentBorder}`,
+                  }}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "rgba(254, 206, 0, 0.25)")
+                    (e.currentTarget.style.backgroundColor =
+                      colors.accentMedium)
                   }
                   onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = "rgba(254, 206, 0, 0.15)")
+                    (e.currentTarget.style.backgroundColor = colors.accentLight)
                   }
                 >
                   Refresh
@@ -720,13 +774,19 @@ export default function AdminPanel() {
               </div>
 
               {colleaguesLoading ? (
-                <div className="text-center py-8" style={{ color: "#999999" }}>
+                <div
+                  className="text-center py-8"
+                  style={{ color: colors.secondaryText }}
+                >
                   Loading colleagues...
                 </div>
               ) : colleagues.length === 0 ? (
                 <div
                   className="text-center py-8 rounded-lg"
-                  style={{ color: "#999999", backgroundColor: "rgba(0, 121, 255, 0.08)" }}
+                  style={{
+                    color: colors.secondaryText,
+                    backgroundColor: colors.primaryLighter,
+                  }}
                 >
                   No colleagues added yet
                 </div>
@@ -736,22 +796,28 @@ export default function AdminPanel() {
                     <div
                       key={colleague._id}
                       className="rounded-lg p-4 flex flex-col justify-between border"
-                      style={{ backgroundColor: "rgba(0, 121, 255, 0.05)", borderColor: "rgba(0, 121, 255, 0.2)" }}
+                      style={{
+                        backgroundColor: colors.primaryLight,
+                        borderColor: colors.primaryBorder,
+                      }}
                     >
                       <div>
                         <p
                           className="font-bold mb-2"
-                          style={{ color: "#fdf7de" }}
+                          style={{ color: colors.text }}
                         >
                           {colleague.name}
                         </p>
                         <p
                           className="text-sm mb-3 italic"
-                          style={{ color: "#999999" }}
+                          style={{ color: colors.secondaryText }}
                         >
                           "{colleague.riddle}"
                         </p>
-                        <p className="text-xs" style={{ color: "#666666" }}>
+                        <p
+                          className="text-xs"
+                          style={{ color: colors.tertiaryText }}
+                        >
                           Face descriptor: {colleague.faceDescriptor.length}{" "}
                           values
                         </p>
@@ -759,12 +825,17 @@ export default function AdminPanel() {
                       <button
                         onClick={() => deleteColleague(colleague.name)}
                         className="p-2 rounded-lg transition mt-3 flex items-center justify-center"
-                        style={{ backgroundColor: "#fece00", color: "#181818" }}
+                        style={{
+                          backgroundColor: colors.accent,
+                          color: colors.background,
+                        }}
                         onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor = "#f5b300")
+                          (e.currentTarget.style.backgroundColor =
+                            colors.accentDark)
                         }
                         onMouseLeave={(e) =>
-                          (e.currentTarget.style.backgroundColor = "#fece00")
+                          (e.currentTarget.style.backgroundColor =
+                            colors.accent)
                         }
                       >
                         <Trash2 size={18} />

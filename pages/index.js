@@ -4,6 +4,7 @@ import Webcam from "react-webcam";
 import * as mobilenet from "@tensorflow-models/mobilenet";
 import "@tensorflow/tfjs";
 import { shuffleItems, getColleagueItems } from "../lib/items";
+import { colors } from "../lib/colors";
 import { Camera, Trophy, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -420,7 +421,7 @@ export default function ScavengerHunt() {
     return (
       <div
         className="flex flex-col items-center min-h-screen p-6"
-        style={{ backgroundColor: "#181818", color: "#fdf7de" }}
+        style={{ backgroundColor: colors.background, color: colors.text }}
       >
         <h1 className="text-4xl font-bold mt-10 mb-8 text-center">
           Office Scavenger Hunt
@@ -429,8 +430,8 @@ export default function ScavengerHunt() {
           <div
             className="mb-6 p-4 rounded-lg max-w-sm w-full text-center border"
             style={{
-              backgroundColor: "rgba(0, 121, 255, 0.08)",
-              border: "1px solid #0079ff",
+              backgroundColor: colors.primaryLighter,
+              border: `1px solid ${colors.primary}`,
             }}
           >
             <p className="text-sm mb-3" style={{ color: "#99ccff" }}>
@@ -440,9 +441,16 @@ export default function ScavengerHunt() {
             <button
               onClick={() => setGameStarted(true)}
               className="w-full px-4 py-2 rounded-lg font-bold transition mb-2"
-              style={{ backgroundColor: "#0079ff", color: "#181818" }}
-              onMouseEnter={(e) => (e.target.style.backgroundColor = "#0066dd")}
-              onMouseLeave={(e) => (e.target.style.backgroundColor = "#0079ff")}
+              style={{
+                backgroundColor: colors.primary,
+                color: colors.background,
+              }}
+              onMouseEnter={(e) =>
+                (e.target.style.backgroundColor = colors.primaryDark)
+              }
+              onMouseLeave={(e) =>
+                (e.target.style.backgroundColor = colors.primary)
+              }
             >
               📋 Resume Game
             </button>
@@ -470,12 +478,12 @@ export default function ScavengerHunt() {
         <input
           className="p-4 rounded-xl w-full max-w-sm mb-4 focus:outline-none"
           style={{
-            backgroundColor: "rgba(0, 121, 255, 0.1)",
-            color: "#fdf7de",
-            border: "1px solid #0079ff",
+            backgroundColor: colors.primaryLightest,
+            color: colors.text,
+            border: `1px solid ${colors.primary}`,
           }}
-          onFocus={(e) => (e.target.style.borderColor = "#fece00")}
-          onBlur={(e) => (e.target.style.borderColor = "#0079ff")}
+          onFocus={(e) => (e.target.style.borderColor = colors.accent)}
+          onBlur={(e) => (e.target.style.borderColor = colors.primary)}
           placeholder="Enter Team Name"
           value={teamName}
           onChange={(e) => setTeamName(e.target.value)}
@@ -486,9 +494,16 @@ export default function ScavengerHunt() {
             onClick={startGame}
             disabled={isStarting}
             className="disabled:opacity-50 px-8 py-4 rounded-xl font-bold w-full max-w-sm transition mb-4"
-            style={{ backgroundColor: "#0079ff", color: "#181818" }}
-            onMouseEnter={(e) => (e.target.style.backgroundColor = "#0066dd")}
-            onMouseLeave={(e) => (e.target.style.backgroundColor = "#0079ff")}
+            style={{
+              backgroundColor: colors.primary,
+              color: colors.background,
+            }}
+            onMouseEnter={(e) =>
+              (e.target.style.backgroundColor = colors.primaryDark)
+            }
+            onMouseLeave={(e) =>
+              (e.target.style.backgroundColor = colors.primary)
+            }
           >
             {isStarting ? "Starting..." : "START GAME"}
           </button>
@@ -544,9 +559,9 @@ export default function ScavengerHunt() {
     return (
       <div
         className="flex flex-col items-center justify-center min-h-screen p-6 text-center"
-        style={{ backgroundColor: "#181818", color: "#fdf7de" }}
+        style={{ backgroundColor: colors.background, color: colors.text }}
       >
-        <Trophy size={80} className="mb-4" style={{ color: "#fece00" }} />
+        <Trophy size={80} className="mb-4" style={{ color: colors.accent }} />
         <h1 className="text-4xl font-bold mb-2">MISSION COMPLETE</h1>
         <p className="text-xl mb-1">Team {teamName} finished the hunt!</p>
         {finalResult && (
@@ -567,15 +582,15 @@ export default function ScavengerHunt() {
           href="/scores-management"
           className="mb-6 px-5 py-2 rounded-full font-semibold transition"
           style={{
-            backgroundColor: "rgba(0, 121, 255, 0.08)",
-            color: "#0079ff",
-            border: "1px solid rgba(0, 121, 255, 0.2)",
+            backgroundColor: colors.primaryLighter,
+            color: colors.primary,
+            border: `1px solid ${colors.primaryBorder}`,
           }}
           onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = "rgba(0, 121, 255, 0.15)")
+            (e.currentTarget.style.backgroundColor = colors.primaryWash)
           }
           onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = "rgba(0, 121, 255, 0.08)")
+            (e.currentTarget.style.backgroundColor = colors.primaryLighter)
           }
         >
           View Scores
@@ -587,9 +602,11 @@ export default function ScavengerHunt() {
             window.location.reload();
           }}
           className="px-6 py-2 rounded-full font-bold"
-          style={{ backgroundColor: "#fece00", color: "#181818" }}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = "#f5b300")}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = "#fece00")}
+          style={{ backgroundColor: colors.accent, color: colors.background }}
+          onMouseEnter={(e) =>
+            (e.target.style.backgroundColor = colors.accentDark)
+          }
+          onMouseLeave={(e) => (e.target.style.backgroundColor = colors.accent)}
         >
           Play Again
         </button>
@@ -600,11 +617,11 @@ export default function ScavengerHunt() {
   return (
     <div
       className="flex flex-col min-h-screen"
-      style={{ backgroundColor: "#181818", color: "#fdf7de" }}
+      style={{ backgroundColor: colors.background, color: colors.text }}
     >
       <div
         className="p-4 flex justify-between items-center"
-        style={{ backgroundColor: "rgba(0, 121, 255, 0.06)" }}
+        style={{ backgroundColor: colors.primarySubtle }}
       >
         <span className="font-bold">
           {currentIndex + 1}/{questions.length}
@@ -612,10 +629,34 @@ export default function ScavengerHunt() {
         <span className="font-mono" style={{ color: "#fece00" }}>
           {formatTime(elapsed)}
         </span>
-        <span className="text-sm" style={{ color: "#999999" }}>
-          ❌ {errorCount} &nbsp;
-          <span style={{ color: "#0079ff" }}>{teamName}</span>
-        </span>
+        <div className="flex items-center gap-4">
+          <span className="text-sm" style={{ color: colors.secondaryText }}>
+            ❌ {errorCount} &nbsp;
+            <span style={{ color: colors.primary }}>{teamName}</span>
+          </span>
+          <button
+            onClick={() => {
+              if (confirm("Exit game? Your progress will be saved.")) {
+                window.location.href = "/";
+              }
+            }}
+            className="px-3 py-1 rounded-lg text-sm font-semibold transition"
+            style={{
+              backgroundColor: "rgba(254, 206, 0, 0.2)",
+              color: "#fece00",
+              border: "1px solid #fece00",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor =
+                "rgba(254, 206, 0, 0.35)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "rgba(254, 206, 0, 0.2)")
+            }
+          >
+            Exit
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 relative flex flex-col items-center justify-center p-4">
@@ -625,7 +666,7 @@ export default function ScavengerHunt() {
           </h2>
           <h3
             className="text-xl font-semibold italic"
-            style={{ color: "#0079ff" }}
+            style={{ color: colors.primary }}
           >
             {questions[currentIndex]?.riddle ||
               "Find the target item or person."}
@@ -634,7 +675,7 @@ export default function ScavengerHunt() {
 
         <div
           className="relative rounded-3xl overflow-hidden w-full max-w-md aspect-square"
-          style={{ border: "4px solid rgba(0, 121, 255, 0.3)" }}
+          style={{ border: `4px solid ${colors.primaryBorder}` }}
         >
           <Webcam
             audio={false}
@@ -646,14 +687,17 @@ export default function ScavengerHunt() {
           {isLoading && (
             <div
               className="absolute inset-0 flex items-center justify-center"
-              style={{ backgroundColor: "rgba(0, 121, 255, 0.15)" }}
+              style={{ backgroundColor: colors.blueOverlay }}
             >
               <Loader2 className="animate-spin" size={48} />
             </div>
           )}
         </div>
 
-        <p className="mt-4 italic text-center" style={{ color: "#999999" }}>
+        <p
+          className="mt-4 italic text-center"
+          style={{ color: colors.secondaryText }}
+        >
           {message}
         </p>
 
@@ -661,13 +705,13 @@ export default function ScavengerHunt() {
           onClick={captureAndVerify}
           disabled={isLoading || !model || !faceModelsLoaded}
           className="mt-8 p-6 rounded-full shadow-xl active:scale-10 transition disabled:opacity-50"
-          style={{ backgroundColor: "#0079ff", color: "#181818" }}
+          style={{ backgroundColor: colors.primary, color: colors.background }}
           onMouseEnter={(e) =>
             !e.currentTarget.disabled &&
-            (e.currentTarget.style.backgroundColor = "#0066dd")
+            (e.currentTarget.style.backgroundColor = colors.primaryDark)
           }
           onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = "#0079ff")
+            (e.currentTarget.style.backgroundColor = colors.primary)
           }
         >
           <Camera size={32} />

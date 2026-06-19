@@ -434,7 +434,7 @@ export default function ScavengerHunt() {
               border: `1px solid ${colors.primary}`,
             }}
           >
-            <p className="text-sm mb-3" style={{ color: "#99ccff" }}>
+            <p className="text-sm mb-3" style={{ color: colors.infoText }}>
               You have an unfinished game from{" "}
               <strong>{savedState.teamName}</strong>
             </p>
@@ -461,14 +461,14 @@ export default function ScavengerHunt() {
               }}
               className="w-full px-4 py-2 rounded-lg transition text-sm"
               style={{
-                backgroundColor: "rgba(254, 206, 0, 0.15)",
-                color: "#181818",
+                backgroundColor: colors.accentLighter,
+                color: colors.secondaryText,
               }}
               onMouseEnter={(e) =>
-                (e.target.style.backgroundColor = "rgba(254, 206, 0, 0.25)")
+                (e.target.style.backgroundColor = colors.accentMedium)
               }
               onMouseLeave={(e) =>
-                (e.target.style.backgroundColor = "rgba(254, 206, 0, 0.15)")
+                (e.target.style.backgroundColor = colors.accentLighter)
               }
             >
               Start New Game
@@ -513,17 +513,15 @@ export default function ScavengerHunt() {
             href="/scores-management"
             className="px-4 py-3 rounded-xl text-center font-semibold transition border"
             style={{
-              backgroundColor: "rgba(0, 121, 255, 0.08)",
-              color: "#fdf7de",
-              border: "1px solid rgba(0, 121, 255, 0.2)",
+              backgroundColor: colors.primaryLighter,
+              color: colors.text,
+              border: `1px solid ${colors.primaryBorder}`,
             }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor =
-                "rgba(0, 121, 255, 0.15)")
+              (e.currentTarget.style.backgroundColor = colors.primaryWash)
             }
             onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor =
-                "rgba(0, 121, 255, 0.08)")
+              (e.currentTarget.style.backgroundColor = colors.primaryLighter)
             }
           >
             Scores
@@ -532,17 +530,15 @@ export default function ScavengerHunt() {
             href="/admin"
             className="px-4 py-3 rounded-xl text-center font-semibold transition border"
             style={{
-              backgroundColor: "rgba(0, 121, 255, 0.08)",
-              color: "#fdf7de",
-              border: "1px solid rgba(0, 121, 255, 0.2)",
+              backgroundColor: colors.primaryLighter,
+              color: colors.text,
+              border: `1px solid ${colors.primaryBorder}`,
             }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor =
-                "rgba(0, 121, 255, 0.15)")
+              (e.currentTarget.style.backgroundColor = colors.primaryWash)
             }
             onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor =
-                "rgba(0, 121, 255, 0.08)")
+              (e.currentTarget.style.backgroundColor = colors.primaryLighter)
             }
           >
             Admin
@@ -626,7 +622,7 @@ export default function ScavengerHunt() {
         <span className="font-bold">
           {currentIndex + 1}/{questions.length}
         </span>
-        <span className="font-mono" style={{ color: "#fece00" }}>
+        <span className="font-mono" style={{ color: colors.accent }}>
           {formatTime(elapsed)}
         </span>
         <div className="flex items-center gap-4">
@@ -642,16 +638,15 @@ export default function ScavengerHunt() {
             }}
             className="px-3 py-1 rounded-lg text-sm font-semibold transition"
             style={{
-              backgroundColor: "rgba(254, 206, 0, 0.2)",
-              color: "#fece00",
-              border: "1px solid #fece00",
+              backgroundColor: colors.accentWash,
+              color: colors.accent,
+              border: `1px solid ${colors.accent}`,
             }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor =
-                "rgba(254, 206, 0, 0.35)")
+              (e.currentTarget.style.backgroundColor = colors.accentDarker)
             }
             onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "rgba(254, 206, 0, 0.2)")
+              (e.currentTarget.style.backgroundColor = colors.accentWash)
             }
           >
             Exit

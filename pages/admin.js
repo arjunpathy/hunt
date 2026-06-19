@@ -226,6 +226,7 @@ export default function AdminPanel() {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    setActiveTab("hunt-master");
     setScores([]);
   };
 
@@ -271,231 +272,248 @@ export default function AdminPanel() {
       className="min-h-screen p-6"
       style={{ backgroundColor: colors.background, color: colors.text }}
     >
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Admin Panel</h1>
-          <a href="/" className="transition" style={{ color: colors.primary }}>
-            ← Back to Game
-          </a>
-        </div>
-
-        {/* Tabs */}
-        <div
-          className="flex gap-4 mb-8"
-          style={{ borderBottom: `1px solid ${colors.primaryBorder}` }}
-        >
-          <button
-            onClick={() => setActiveTab("hunt-master")}
-            className="px-6 py-3 font-semibold transition border-b-2"
-            style={{
-              color:
-                activeTab === "hunt-master"
-                  ? colors.primary
-                  : colors.secondaryText,
-              borderBottomColor:
-                activeTab === "hunt-master" ? colors.primary : "transparent",
-            }}
+      {!isAuthenticated ? (
+        <div className="max-w-md mx-auto pt-16">
+          <div
+            className="w-full p-8 rounded-lg"
+            style={{ backgroundColor: colors.primaryLighter }}
           >
-            Hunt Master Setup
-          </button>
-          <button
-            onClick={() => setActiveTab("scores")}
-            className="px-6 py-3 font-semibold transition border-b-2"
-            style={{
-              color:
-                activeTab === "scores" ? colors.primary : colors.secondaryText,
-              borderBottomColor:
-                activeTab === "scores" ? colors.primary : "transparent",
-            }}
-          >
-            Scores Management
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab("colleagues");
-              fetchColleagues();
-            }}
-            className="px-6 py-3 font-semibold transition border-b-2"
-            style={{
-              color:
-                activeTab === "colleagues"
-                  ? colors.primary
-                  : colors.secondaryText,
-              borderBottomColor:
-                activeTab === "colleagues" ? colors.primary : "transparent",
-            }}
-          >
-            Manage Colleagues
-          </button>
-        </div>
-
-        {/* Hunt Master Tab */}
-        {activeTab === "hunt-master" && (
-          <div className="flex flex-col items-center">
-            <p
-              className="mb-8 text-center max-w-sm"
-              style={{ color: colors.secondaryText }}
-            >
-              Capture your face so participants must find <strong>you</strong>{" "}
-              during the hunt.
-            </p>
-
-            <div
-              className="relative rounded-3xl overflow-hidden w-full max-w-sm aspect-square mb-4"
-              style={{ border: `4px solid ${colors.primaryBorder}` }}
-            >
-              <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                videoConstraints={{ facingMode: "user" }}
-                className="w-full h-full object-cover"
-              />
-              {!modelsLoaded && (
-                <div
-                  className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-                  style={{ backgroundColor: colors.blueOverlayLight }}
-                >
-                  <Loader2 className="animate-spin" size={40} />
-                  <span
-                    className="text-sm"
-                    style={{ color: colors.secondaryText }}
-                  >
-                    Loading models...
-                  </span>
-                </div>
-              )}
-              {saved && (
-                <div
-                  className="absolute inset-0 flex items-center justify-center"
-                  style={{ backgroundColor: colors.blueOverlayLight }}
-                >
-                  <CheckCircle2 size={64} style={{ color: colors.accent }} />
-                </div>
-              )}
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold">Admin Login</h1>
+              <a
+                href="/"
+                className="transition"
+                style={{ color: colors.primary }}
+              >
+                ← Back to Game
+              </a>
             </div>
 
-            <p
-              className="mb-6 text-center text-sm"
-              style={{ color: saved ? colors.accent : colors.secondaryText }}
-            >
-              {status}
-            </p>
+            <form onSubmit={handleLogin}>
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter admin password"
+                className="w-full px-4 py-2 rounded-lg mb-4 focus:outline-none"
+                style={{
+                  backgroundColor: colors.primaryLightest,
+                  color: colors.text,
+                  border: `1px solid ${colors.primary}`,
+                }}
+                onFocus={(e) => (e.target.style.borderColor = colors.primary)}
+                onBlur={(e) => (e.target.style.borderColor = colors.primary)}
+              />
 
-            <button
-              onClick={capture}
-              disabled={!modelsLoaded || isCapturing}
-              className="disabled:opacity-50 px-8 py-4 rounded-xl font-bold w-full max-w-sm transition flex items-center justify-center gap-3 mb-4"
-              style={{
-                backgroundColor: colors.primary,
-                color: colors.background,
-              }}
-              onMouseEnter={(e) =>
-                (e.target.style.backgroundColor = colors.primaryDark)
-              }
-              onMouseLeave={(e) =>
-                (e.target.style.backgroundColor = colors.primary)
-              }
-            >
-              {isCapturing ? (
-                <Loader2 className="animate-spin" size={20} />
-              ) : (
-                <Camera size={20} />
-              )}
-              {hasSaved ? "Recapture Face" : "Save My Face"}
-            </button>
-
-            {hasSaved && (
               <button
-                onClick={clear}
-                className="flex items-center gap-2 text-sm transition"
-                style={{ color: colors.accent }}
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-sm mb-4"
+                style={{ color: colors.secondaryText }}
               >
-                <Trash2 size={16} />
-                Clear saved face
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
-            )}
-          </div>
-        )}
 
-        {/* Scores Management Tab */}
-        {activeTab === "scores" && (
-          <div>
-            {!isAuthenticated ? (
-              <div className="flex justify-center">
-                <form
-                  onSubmit={handleLogin}
-                  className="w-full max-w-md p-8 rounded-lg"
-                  style={{ backgroundColor: colors.primaryLighter }}
-                >
-                  <h2 className="text-2xl font-bold mb-6">Scores Management</h2>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter admin password"
-                    className="w-full px-4 py-2 rounded-lg mb-4 focus:outline-none"
-                    style={{
-                      backgroundColor: colors.primaryLightest,
-                      color: colors.text,
-                      border: `1px solid ${colors.primary}`,
-                    }}
-                    onFocus={(e) =>
-                      (e.target.style.borderColor = colors.primary)
-                    }
-                    onBlur={(e) =>
-                      (e.target.style.borderColor = colors.primary)
-                    }
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-sm mb-4"
-                    style={{ color: colors.secondaryText }}
+              <button
+                type="submit"
+                className="w-full py-2 rounded-lg font-bold transition"
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.background,
+                }}
+                onMouseEnter={(e) =>
+                  (e.target.style.backgroundColor = colors.primaryDark)
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.backgroundColor = colors.primary)
+                }
+              >
+                Login
+              </button>
+            </form>
+          </div>
+        </div>
+      ) : (
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold">Admin Panel</h1>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-lg transition"
+                style={{
+                  backgroundColor: colors.accent,
+                  color: colors.background,
+                }}
+                onMouseEnter={(e) =>
+                  (e.target.style.backgroundColor = colors.accentDark)
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.backgroundColor = colors.accent)
+                }
+              >
+                Logout
+              </button>
+              <a
+                href="/"
+                className="transition"
+                style={{ color: colors.primary }}
+              >
+                ← Back to Game
+              </a>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div
+            className="flex gap-4 mb-8"
+            style={{ borderBottom: `1px solid ${colors.primaryBorder}` }}
+          >
+            <button
+              onClick={() => setActiveTab("hunt-master")}
+              className="px-6 py-3 font-semibold transition border-b-2"
+              style={{
+                color:
+                  activeTab === "hunt-master"
+                    ? colors.primary
+                    : colors.secondaryText,
+                borderBottomColor:
+                  activeTab === "hunt-master" ? colors.primary : "transparent",
+              }}
+            >
+              Hunt Master Setup
+            </button>
+            <button
+              onClick={() => setActiveTab("scores")}
+              className="px-6 py-3 font-semibold transition border-b-2"
+              style={{
+                color:
+                  activeTab === "scores"
+                    ? colors.primary
+                    : colors.secondaryText,
+                borderBottomColor:
+                  activeTab === "scores" ? colors.primary : "transparent",
+              }}
+            >
+              Scores Management
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("colleagues");
+                fetchColleagues();
+              }}
+              className="px-6 py-3 font-semibold transition border-b-2"
+              style={{
+                color:
+                  activeTab === "colleagues"
+                    ? colors.primary
+                    : colors.secondaryText,
+                borderBottomColor:
+                  activeTab === "colleagues" ? colors.primary : "transparent",
+              }}
+            >
+              Manage Colleagues
+            </button>
+          </div>
+
+          {/* Hunt Master Tab */}
+          {activeTab === "hunt-master" && (
+            <div className="flex flex-col items-center">
+              <p
+                className="mb-8 text-center max-w-sm"
+                style={{ color: colors.secondaryText }}
+              >
+                Capture your face so participants must find <strong>you</strong>{" "}
+                during the hunt.
+              </p>
+
+              <div
+                className="relative rounded-3xl overflow-hidden w-full max-w-sm aspect-square mb-4"
+                style={{ border: `4px solid ${colors.primaryBorder}` }}
+              >
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat="image/jpeg"
+                  videoConstraints={{ facingMode: "user" }}
+                  className="w-full h-full object-cover"
+                />
+                {!modelsLoaded && (
+                  <div
+                    className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+                    style={{ backgroundColor: colors.blueOverlayLight }}
                   >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                  <button
-                    type="submit"
-                    className="w-full py-2 rounded-lg font-bold transition"
-                    style={{
-                      backgroundColor: colors.primary,
-                      color: colors.background,
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = colors.primaryDark)
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = colors.primary)
-                    }
+                    <Loader2 className="animate-spin" size={40} />
+                    <span
+                      className="text-sm"
+                      style={{ color: colors.secondaryText }}
+                    >
+                      Loading models...
+                    </span>
+                  </div>
+                )}
+                {saved && (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{ backgroundColor: colors.blueOverlayLight }}
                   >
-                    Login
-                  </button>
-                </form>
+                    <CheckCircle2 size={64} style={{ color: colors.accent }} />
+                  </div>
+                )}
               </div>
-            ) : (
+
+              <p
+                className="mb-6 text-center text-sm"
+                style={{ color: saved ? colors.accent : colors.secondaryText }}
+              >
+                {status}
+              </p>
+
+              <button
+                onClick={capture}
+                disabled={!modelsLoaded || isCapturing}
+                className="disabled:opacity-50 px-8 py-4 rounded-xl font-bold w-full max-w-sm transition flex items-center justify-center gap-3 mb-4"
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.background,
+                }}
+                onMouseEnter={(e) =>
+                  (e.target.style.backgroundColor = colors.primaryDark)
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.backgroundColor = colors.primary)
+                }
+              >
+                {isCapturing ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  <Camera size={20} />
+                )}
+                {hasSaved ? "Recapture Face" : "Save My Face"}
+              </button>
+
+              {hasSaved && (
+                <button
+                  onClick={clear}
+                  className="flex items-center gap-2 text-sm transition"
+                  style={{ color: colors.accent }}
+                >
+                  <Trash2 size={16} />
+                  Clear saved face
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Scores Management Tab */}
+          {activeTab === "scores" && (
+            <div>
               <div>
                 <div
                   className="flex justify-between items-center mb-8"
                   style={{ color: colors.text }}
                 >
                   <h2 className="text-2xl font-bold">All Scores</h2>
-                  <button
-                    onClick={handleLogout}
-                    className="px-4 py-2 rounded-lg transition"
-                    style={{
-                      backgroundColor: colors.accent,
-                      color: colors.background,
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.backgroundColor = colors.accentDark)
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.backgroundColor = colors.accent)
-                    }
-                  >
-                    Logout
-                  </button>
                 </div>
 
                 <div className="flex gap-4 mb-8">
@@ -582,7 +600,7 @@ export default function AdminPanel() {
                             }}
                             onMouseEnter={(e) =>
                               (e.currentTarget.style.backgroundColor =
-                                "rgba(0, 121, 255, 0.1)")
+                                colors.primaryLightest)
                             }
                             onMouseLeave={(e) =>
                               (e.currentTarget.style.backgroundColor =
@@ -600,19 +618,19 @@ export default function AdminPanel() {
                             </td>
                             <td
                               className="px-4 py-3 text-right"
-                              style={{ color: "#ff6b6b" }}
+                              style={{ color: colors.danger }}
                             >
                               {score.errors}
                             </td>
                             <td
                               className="px-4 py-3 text-sm"
-                              style={{ color: "#999999" }}
+                              style={{ color: colors.secondaryText }}
                             >
                               {new Date(score.completedAt).toLocaleString()}
                             </td>
                             <td
                               className="px-4 py-3 text-sm"
-                              style={{ color: "#999999" }}
+                              style={{ color: colors.secondaryText }}
                             >
                               {new Date(score.createdAt).toLocaleString()}
                             </td>
@@ -634,220 +652,221 @@ export default function AdminPanel() {
                   <p>Total scores: {scores.length}</p>
                 </div>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
 
-        {/* Colleagues Tab */}
-        {activeTab === "colleagues" && (
-          <div className="flex flex-col gap-8">
-            <div className="flex flex-col items-center gap-6">
-              <div className="text-center max-w-sm">
-                <h2 className="text-2xl font-bold mb-2">Add Colleague</h2>
-                <p style={{ color: colors.secondaryText }}>
-                  Capture colleague photos to use as game answers
-                </p>
+          {/* Colleagues Tab */}
+          {activeTab === "colleagues" && (
+            <div className="flex flex-col gap-8">
+              <div className="flex flex-col items-center gap-6">
+                <div className="text-center max-w-sm">
+                  <h2 className="text-2xl font-bold mb-2">Add Colleague</h2>
+                  <p style={{ color: colors.secondaryText }}>
+                    Capture colleague photos to use as game answers
+                  </p>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Colleague name"
+                  value={colleagueName}
+                  onChange={(e) => setColleagueName(e.target.value)}
+                  className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full"
+                  style={{
+                    backgroundColor: colors.primaryLightest,
+                    color: colors.text,
+                    border: `1px solid ${colors.primary}`,
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = colors.primary)}
+                  onBlur={(e) => (e.target.style.borderColor = colors.primary)}
+                />
+
+                <textarea
+                  placeholder="Enter a riddle for this colleague (e.g., 'I love debugging code and drinking coffee')"
+                  value={colleagueRiddle}
+                  onChange={(e) => setColleagueRiddle(e.target.value)}
+                  className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full h-24 resize-none"
+                  style={{
+                    backgroundColor: colors.primaryLightest,
+                    color: colors.text,
+                    border: `1px solid ${colors.primary}`,
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = colors.primary)}
+                  onBlur={(e) => (e.target.style.borderColor = colors.primary)}
+                />
+
+                <div
+                  className="relative rounded-3xl overflow-hidden w-full max-w-sm aspect-square"
+                  style={{ border: `4px solid ${colors.primaryBorder}` }}
+                >
+                  <Webcam
+                    audio={false}
+                    ref={colleagueWebcamRef}
+                    screenshotFormat="image/jpeg"
+                    videoConstraints={{ facingMode: "user" }}
+                    className="w-full h-full object-cover"
+                  />
+                  {!modelsLoaded && (
+                    <div
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+                      style={{ backgroundColor: colors.darkOverlayLight }}
+                    >
+                      <Loader2 className="animate-spin" size={40} />
+                      <span
+                        className="text-sm"
+                        style={{ color: colors.secondaryText }}
+                      >
+                        Loading models...
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={captureColleague}
+                  disabled={isCapturingColleague || !modelsLoaded}
+                  className="disabled:opacity-50 px-6 py-3 rounded-lg font-bold transition flex items-center gap-2"
+                  style={{
+                    backgroundColor: colors.primary,
+                    color: colors.background,
+                  }}
+                  onMouseEnter={(e) =>
+                    !e.currentTarget.disabled &&
+                    (e.currentTarget.style.backgroundColor = colors.primaryDark)
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = colors.primary)
+                  }
+                >
+                  {isCapturingColleague ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Capturing...
+                    </>
+                  ) : (
+                    <>
+                      <Camera size={18} />
+                      Capture & Save
+                    </>
+                  )}
+                </button>
+
+                {colleagueStatus && (
+                  <p
+                    className="text-center text-sm"
+                    style={{
+                      color: colleagueStatus.startsWith("✅")
+                        ? colors.accent
+                        : colleagueStatus.startsWith("❌")
+                          ? colors.danger
+                          : colors.primary,
+                    }}
+                  >
+                    {colleagueStatus}
+                  </p>
+                )}
               </div>
 
-              <input
-                type="text"
-                placeholder="Colleague name"
-                value={colleagueName}
-                onChange={(e) => setColleagueName(e.target.value)}
-                className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full"
-                style={{
-                  backgroundColor: colors.primaryLightest,
-                  color: colors.text,
-                  border: `1px solid ${colors.primary}`,
-                }}
-                onFocus={(e) => (e.target.style.borderColor = colors.primary)}
-                onBlur={(e) => (e.target.style.borderColor = colors.primary)}
-              />
-
-              <textarea
-                placeholder="Enter a riddle for this colleague (e.g., 'I love debugging code and drinking coffee')"
-                value={colleagueRiddle}
-                onChange={(e) => setColleagueRiddle(e.target.value)}
-                className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full h-24 resize-none"
-                style={{
-                  backgroundColor: colors.primaryLightest,
-                  color: colors.text,
-                  border: `1px solid ${colors.primary}`,
-                }}
-                onFocus={(e) => (e.target.style.borderColor = colors.primary)}
-                onBlur={(e) => (e.target.style.borderColor = colors.primary)}
-              />
-
-              <div
-                className="relative rounded-3xl overflow-hidden w-full max-w-sm aspect-square"
-                style={{ border: `4px solid ${colors.primaryBorder}` }}
-              >
-                <Webcam
-                  audio={false}
-                  ref={colleagueWebcamRef}
-                  screenshotFormat="image/jpeg"
-                  videoConstraints={{ facingMode: "user" }}
-                  className="w-full h-full object-cover"
-                />
-                {!modelsLoaded && (
-                  <div
-                    className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-                    style={{ backgroundColor: colors.darkOverlayLight }}
+              <div>
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold">Saved Colleagues</h3>
+                  <button
+                    onClick={fetchColleagues}
+                    className="px-4 py-2 rounded-lg transition text-sm"
+                    style={{
+                      backgroundColor: colors.accentLight,
+                      color: colors.accent,
+                      border: `1px solid ${colors.accentBorder}`,
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor =
+                        colors.accentMedium)
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor =
+                        colors.accentLight)
+                    }
                   >
-                    <Loader2 className="animate-spin" size={40} />
-                    <span
-                      className="text-sm"
-                      style={{ color: colors.secondaryText }}
-                    >
-                      Loading models...
-                    </span>
+                    Refresh
+                  </button>
+                </div>
+
+                {colleaguesLoading ? (
+                  <div
+                    className="text-center py-8"
+                    style={{ color: colors.secondaryText }}
+                  >
+                    Loading colleagues...
+                  </div>
+                ) : colleagues.length === 0 ? (
+                  <div
+                    className="text-center py-8 rounded-lg"
+                    style={{
+                      color: colors.secondaryText,
+                      backgroundColor: colors.primaryLighter,
+                    }}
+                  >
+                    No colleagues added yet
+                  </div>
+                ) : (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {colleagues.map((colleague) => (
+                      <div
+                        key={colleague._id}
+                        className="rounded-lg p-4 flex flex-col justify-between border"
+                        style={{
+                          backgroundColor: colors.primaryLight,
+                          borderColor: colors.primaryBorder,
+                        }}
+                      >
+                        <div>
+                          <p
+                            className="font-bold mb-2"
+                            style={{ color: colors.text }}
+                          >
+                            {colleague.name}
+                          </p>
+                          <p
+                            className="text-sm mb-3 italic"
+                            style={{ color: colors.secondaryText }}
+                          >
+                            "{colleague.riddle}"
+                          </p>
+                          <p
+                            className="text-xs"
+                            style={{ color: colors.tertiaryText }}
+                          >
+                            Face descriptor: {colleague.faceDescriptor.length}{" "}
+                            values
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => deleteColleague(colleague.name)}
+                          className="p-2 rounded-lg transition mt-3 flex items-center justify-center"
+                          style={{
+                            backgroundColor: colors.accent,
+                            color: colors.background,
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              colors.accentDark)
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              colors.accent)
+                          }
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
-
-              <button
-                onClick={captureColleague}
-                disabled={isCapturingColleague || !modelsLoaded}
-                className="disabled:opacity-50 px-6 py-3 rounded-lg font-bold transition flex items-center gap-2"
-                style={{
-                  backgroundColor: colors.primary,
-                  color: colors.background,
-                }}
-                onMouseEnter={(e) =>
-                  !e.currentTarget.disabled &&
-                  (e.currentTarget.style.backgroundColor = colors.primaryDark)
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor = colors.primary)
-                }
-              >
-                {isCapturingColleague ? (
-                  <>
-                    <Loader2 size={18} className="animate-spin" />
-                    Capturing...
-                  </>
-                ) : (
-                  <>
-                    <Camera size={18} />
-                    Capture & Save
-                  </>
-                )}
-              </button>
-
-              {colleagueStatus && (
-                <p
-                  className="text-center text-sm"
-                  style={{
-                    color: colleagueStatus.startsWith("✅")
-                      ? colors.accent
-                      : colleagueStatus.startsWith("❌")
-                        ? "#ff6b6b"
-                        : colors.primary,
-                  }}
-                >
-                  {colleagueStatus}
-                </p>
-              )}
             </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold">Saved Colleagues</h3>
-                <button
-                  onClick={fetchColleagues}
-                  className="px-4 py-2 rounded-lg transition text-sm"
-                  style={{
-                    backgroundColor: colors.accentLight,
-                    color: colors.accent,
-                    border: `1px solid ${colors.accentBorder}`,
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      colors.accentMedium)
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = colors.accentLight)
-                  }
-                >
-                  Refresh
-                </button>
-              </div>
-
-              {colleaguesLoading ? (
-                <div
-                  className="text-center py-8"
-                  style={{ color: colors.secondaryText }}
-                >
-                  Loading colleagues...
-                </div>
-              ) : colleagues.length === 0 ? (
-                <div
-                  className="text-center py-8 rounded-lg"
-                  style={{
-                    color: colors.secondaryText,
-                    backgroundColor: colors.primaryLighter,
-                  }}
-                >
-                  No colleagues added yet
-                </div>
-              ) : (
-                <div className="grid gap-4 md:grid-cols-2">
-                  {colleagues.map((colleague) => (
-                    <div
-                      key={colleague._id}
-                      className="rounded-lg p-4 flex flex-col justify-between border"
-                      style={{
-                        backgroundColor: colors.primaryLight,
-                        borderColor: colors.primaryBorder,
-                      }}
-                    >
-                      <div>
-                        <p
-                          className="font-bold mb-2"
-                          style={{ color: colors.text }}
-                        >
-                          {colleague.name}
-                        </p>
-                        <p
-                          className="text-sm mb-3 italic"
-                          style={{ color: colors.secondaryText }}
-                        >
-                          "{colleague.riddle}"
-                        </p>
-                        <p
-                          className="text-xs"
-                          style={{ color: colors.tertiaryText }}
-                        >
-                          Face descriptor: {colleague.faceDescriptor.length}{" "}
-                          values
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => deleteColleague(colleague.name)}
-                        className="p-2 rounded-lg transition mt-3 flex items-center justify-center"
-                        style={{
-                          backgroundColor: colors.accent,
-                          color: colors.background,
-                        }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            colors.accentDark)
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            colors.accent)
-                        }
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

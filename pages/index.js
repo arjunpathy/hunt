@@ -177,6 +177,8 @@ export default function ScavengerHunt() {
       setStartTime(saved.startTime);
       setErrorCount(saved.errorCount);
       setGameStarted(true);
+      // Calculate correct elapsed time immediately
+      setElapsed(Math.round((Date.now() - saved.startTime) / 1000));
       setMessage("Game resumed from your last session!");
       setTimeout(() => setMessage("Point camera at the item"), 2000);
     }

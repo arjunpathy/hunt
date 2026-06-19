@@ -266,37 +266,42 @@ export default function AdminPanel() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-6">
+    <div
+      className="min-h-screen p-6"
+      style={{ backgroundColor: "#181818", color: "#fdf7de" }}
+    >
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Admin Panel</h1>
-          <a
-            href="/"
-            className="text-slate-500 hover:text-slate-300 transition"
-          >
+          <a href="/" className="transition" style={{ color: "#0079ff" }}>
             ← Back to Game
           </a>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-4 mb-8 border-b border-slate-700">
+        <div
+          className="flex gap-4 mb-8"
+          style={{ borderBottom: "1px solid #333333" }}
+        >
           <button
             onClick={() => setActiveTab("hunt-master")}
-            className={`px-6 py-3 font-semibold transition border-b-2 ${
-              activeTab === "hunt-master"
-                ? "text-blue-400 border-blue-400"
-                : "text-slate-400 border-transparent hover:text-slate-300"
-            }`}
+            className="px-6 py-3 font-semibold transition border-b-2"
+            style={{
+              color: activeTab === "hunt-master" ? "#0079ff" : "#999999",
+              borderBottomColor:
+                activeTab === "hunt-master" ? "#0079ff" : "transparent",
+            }}
           >
             Hunt Master Setup
           </button>
           <button
             onClick={() => setActiveTab("scores")}
-            className={`px-6 py-3 font-semibold transition border-b-2 ${
-              activeTab === "scores"
-                ? "text-blue-400 border-blue-400"
-                : "text-slate-400 border-transparent hover:text-slate-300"
-            }`}
+            className="px-6 py-3 font-semibold transition border-b-2"
+            style={{
+              color: activeTab === "scores" ? "#0079ff" : "#999999",
+              borderBottomColor:
+                activeTab === "scores" ? "#0079ff" : "transparent",
+            }}
           >
             Scores Management
           </button>
@@ -305,11 +310,12 @@ export default function AdminPanel() {
               setActiveTab("colleagues");
               fetchColleagues();
             }}
-            className={`px-6 py-3 font-semibold transition border-b-2 ${
-              activeTab === "colleagues"
-                ? "text-blue-400 border-blue-400"
-                : "text-slate-400 border-transparent hover:text-slate-300"
-            }`}
+            className="px-6 py-3 font-semibold transition border-b-2"
+            style={{
+              color: activeTab === "colleagues" ? "#0079ff" : "#999999",
+              borderBottomColor:
+                activeTab === "colleagues" ? "#0079ff" : "transparent",
+            }}
           >
             Manage Colleagues
           </button>
@@ -318,12 +324,18 @@ export default function AdminPanel() {
         {/* Hunt Master Tab */}
         {activeTab === "hunt-master" && (
           <div className="flex flex-col items-center">
-            <p className="text-slate-400 mb-8 text-center max-w-sm">
+            <p
+              className="mb-8 text-center max-w-sm"
+              style={{ color: "#999999" }}
+            >
               Capture your face so participants must find <strong>you</strong>{" "}
               during the hunt.
             </p>
 
-            <div className="relative rounded-3xl overflow-hidden border-4 border-slate-700 w-full max-w-sm aspect-square mb-4">
+            <div
+              className="relative rounded-3xl overflow-hidden w-full max-w-sm aspect-square mb-4"
+              style={{ border: "4px solid #333333" }}
+            >
               <Webcam
                 audio={false}
                 ref={webcamRef}
@@ -332,24 +344,29 @@ export default function AdminPanel() {
                 className="w-full h-full object-cover"
               />
               {!modelsLoaded && (
-                <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-3">
+                <div
+                  className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+                  style={{ backgroundColor: "rgba(24, 24, 24, 0.85)" }}
+                >
                   <Loader2 className="animate-spin" size={40} />
-                  <span className="text-sm text-slate-300">
+                  <span className="text-sm" style={{ color: "#999999" }}>
                     Loading models...
                   </span>
                 </div>
               )}
               {saved && (
-                <div className="absolute inset-0 bg-green-900/60 flex items-center justify-center">
-                  <CheckCircle2 size={64} className="text-green-400" />
+                <div
+                  className="absolute inset-0 flex items-center justify-center"
+                  style={{ backgroundColor: "rgba(0, 121, 255, 0.3)" }}
+                >
+                  <CheckCircle2 size={64} style={{ color: "#fece00" }} />
                 </div>
               )}
             </div>
 
             <p
-              className={`mb-6 text-center text-sm ${
-                saved ? "text-green-400" : "text-slate-400"
-              }`}
+              className="mb-6 text-center text-sm"
+              style={{ color: saved ? "#fece00" : "#999999" }}
             >
               {status}
             </p>
@@ -357,7 +374,10 @@ export default function AdminPanel() {
             <button
               onClick={capture}
               disabled={!modelsLoaded || isCapturing}
-              className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 px-8 py-4 rounded-xl font-bold w-full max-w-sm transition flex items-center justify-center gap-3 mb-4"
+              className="disabled:opacity-50 px-8 py-4 rounded-xl font-bold w-full max-w-sm transition flex items-center justify-center gap-3 mb-4"
+              style={{ backgroundColor: "#0079ff", color: "#181818" }}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = "#0066dd")}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = "#0079ff")}
             >
               {isCapturing ? (
                 <Loader2 className="animate-spin" size={20} />
@@ -370,7 +390,8 @@ export default function AdminPanel() {
             {hasSaved && (
               <button
                 onClick={clear}
-                className="text-red-400 hover:text-red-300 flex items-center gap-2 text-sm transition"
+                className="flex items-center gap-2 text-sm transition"
+                style={{ color: "#fece00" }}
               >
                 <Trash2 size={16} />
                 Clear saved face
@@ -386,7 +407,8 @@ export default function AdminPanel() {
               <div className="flex justify-center">
                 <form
                   onSubmit={handleLogin}
-                  className="w-full max-w-md p-8 bg-slate-800 rounded-lg"
+                  className="w-full max-w-md p-8 rounded-lg"
+                  style={{ backgroundColor: "#222222" }}
                 >
                   <h2 className="text-2xl font-bold mb-6">Scores Management</h2>
                   <input
@@ -394,18 +416,33 @@ export default function AdminPanel() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter admin password"
-                    className="w-full px-4 py-2 bg-slate-700 text-white border border-slate-600 rounded-lg mb-4 focus:outline-none focus:border-blue-500"
+                    className="w-full px-4 py-2 rounded-lg mb-4 focus:outline-none"
+                    style={{
+                      backgroundColor: "#333333",
+                      color: "#fdf7de",
+                      border: "1px solid #444444",
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = "#0079ff")}
+                    onBlur={(e) => (e.target.style.borderColor = "#444444")}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-slate-400 hover:text-slate-200 text-sm mb-4"
+                    className="text-sm mb-4"
+                    style={{ color: "#999999" }}
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                   <button
                     type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg font-bold transition"
+                    className="w-full py-2 rounded-lg font-bold transition"
+                    style={{ backgroundColor: "#0079ff", color: "#181818" }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.backgroundColor = "#0066dd")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = "#0079ff")
+                    }
                   >
                     Login
                   </button>
@@ -413,11 +450,21 @@ export default function AdminPanel() {
               </div>
             ) : (
               <div>
-                <div className="flex justify-between items-center mb-8">
+                <div
+                  className="flex justify-between items-center mb-8"
+                  style={{ color: "#fdf7de" }}
+                >
                   <h2 className="text-2xl font-bold">All Scores</h2>
                   <button
                     onClick={handleLogout}
-                    className="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg transition"
+                    className="px-4 py-2 rounded-lg transition"
+                    style={{ backgroundColor: "#fece00", color: "#181818" }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.backgroundColor = "#f5b300")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = "#fece00")
+                    }
                   >
                     Logout
                   </button>
@@ -426,13 +473,27 @@ export default function AdminPanel() {
                 <div className="flex gap-4 mb-8">
                   <button
                     onClick={fetchScores}
-                    className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg transition"
+                    className="px-4 py-2 rounded-lg transition"
+                    style={{ backgroundColor: "#0079ff", color: "#181818" }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.backgroundColor = "#0066dd")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = "#0079ff")
+                    }
                   >
                     Refresh
                   </button>
                   <button
                     onClick={exportToCSV}
-                    className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg flex items-center gap-2 transition"
+                    className="px-4 py-2 rounded-lg flex items-center gap-2 transition"
+                    style={{ backgroundColor: "#fece00", color: "#181818" }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.backgroundColor = "#f5b300")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = "#fece00")
+                    }
                   >
                     <Download size={18} />
                     Export CSV
@@ -440,18 +501,33 @@ export default function AdminPanel() {
                 </div>
 
                 {scoresLoading ? (
-                  <div className="text-center text-slate-400">
+                  <div
+                    className="text-center py-8"
+                    style={{ color: "#999999" }}
+                  >
                     Loading scores...
                   </div>
                 ) : scores.length === 0 ? (
-                  <div className="text-center text-slate-400">
+                  <div
+                    className="text-center py-8 rounded-lg"
+                    style={{ color: "#999999", backgroundColor: "#222222" }}
+                  >
                     No scores yet
                   </div>
                 ) : (
-                  <div className="rounded-lg overflow-hidden border border-slate-700">
+                  <div
+                    className="rounded-lg overflow-hidden"
+                    style={{ border: "1px solid #333333" }}
+                  >
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-slate-800 text-slate-400 text-sm">
+                        <tr
+                          className="text-sm"
+                          style={{
+                            backgroundColor: "#222222",
+                            color: "#999999",
+                          }}
+                        >
                           <th className="px-4 py-3 text-left">Team Name</th>
                           <th className="px-4 py-3 text-right">Time</th>
                           <th className="px-4 py-3 text-right">Errors</th>
@@ -463,21 +539,42 @@ export default function AdminPanel() {
                         {scores.map((score, index) => (
                           <tr
                             key={index}
-                            className="border-t border-slate-700 hover:bg-slate-800/50 transition"
+                            className="transition"
+                            style={{ borderTop: "1px solid #333333" }}
+                            onMouseEnter={(e) =>
+                              (e.currentTarget.style.backgroundColor =
+                                "#222222")
+                            }
+                            onMouseLeave={(e) =>
+                              (e.currentTarget.style.backgroundColor =
+                                "transparent")
+                            }
                           >
                             <td className="px-4 py-3 font-semibold">
                               {score.teamName}
                             </td>
-                            <td className="px-4 py-3 text-right font-mono text-green-400">
+                            <td
+                              className="px-4 py-3 text-right font-mono"
+                              style={{ color: "#fece00" }}
+                            >
                               {formatTime(score.timeTaken)}
                             </td>
-                            <td className="px-4 py-3 text-right text-red-400">
+                            <td
+                              className="px-4 py-3 text-right"
+                              style={{ color: "#ff6b6b" }}
+                            >
                               {score.errors}
                             </td>
-                            <td className="px-4 py-3 text-slate-400 text-sm">
+                            <td
+                              className="px-4 py-3 text-sm"
+                              style={{ color: "#999999" }}
+                            >
                               {new Date(score.completedAt).toLocaleString()}
                             </td>
-                            <td className="px-4 py-3 text-slate-400 text-sm">
+                            <td
+                              className="px-4 py-3 text-sm"
+                              style={{ color: "#999999" }}
+                            >
                               {new Date(score.createdAt).toLocaleString()}
                             </td>
                           </tr>
@@ -487,7 +584,10 @@ export default function AdminPanel() {
                   </div>
                 )}
 
-                <div className="mt-8 p-4 bg-slate-800 rounded-lg text-slate-400 text-sm">
+                <div
+                  className="mt-8 p-4 rounded-lg text-sm"
+                  style={{ backgroundColor: "#222222", color: "#999999" }}
+                >
                   <p>Total scores: {scores.length}</p>
                 </div>
               </div>
@@ -501,7 +601,7 @@ export default function AdminPanel() {
             <div className="flex flex-col items-center gap-6">
               <div className="text-center max-w-sm">
                 <h2 className="text-2xl font-bold mb-2">Add Colleague</h2>
-                <p className="text-slate-400">
+                <p style={{ color: "#999999" }}>
                   Capture colleague photos to use as game answers
                 </p>
               </div>
@@ -511,17 +611,34 @@ export default function AdminPanel() {
                 placeholder="Colleague name"
                 value={colleagueName}
                 onChange={(e) => setColleagueName(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:border-blue-500 outline-none transition max-w-sm w-full"
+                className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full"
+                style={{
+                  backgroundColor: "#222222",
+                  color: "#fdf7de",
+                  border: "1px solid #444444",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "#0079ff")}
+                onBlur={(e) => (e.target.style.borderColor = "#444444")}
               />
 
               <textarea
                 placeholder="Enter a riddle for this colleague (e.g., 'I love debugging code and drinking coffee')"
                 value={colleagueRiddle}
                 onChange={(e) => setColleagueRiddle(e.target.value)}
-                className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:border-blue-500 outline-none transition max-w-sm w-full h-24 resize-none"
+                className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full h-24 resize-none"
+                style={{
+                  backgroundColor: "#222222",
+                  color: "#fdf7de",
+                  border: "1px solid #444444",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "#0079ff")}
+                onBlur={(e) => (e.target.style.borderColor = "#444444")}
               />
 
-              <div className="relative rounded-3xl overflow-hidden border-4 border-slate-700 w-full max-w-sm aspect-square">
+              <div
+                className="relative rounded-3xl overflow-hidden w-full max-w-sm aspect-square"
+                style={{ border: "4px solid #333333" }}
+              >
                 <Webcam
                   audio={false}
                   ref={colleagueWebcamRef}
@@ -530,9 +647,12 @@ export default function AdminPanel() {
                   className="w-full h-full object-cover"
                 />
                 {!modelsLoaded && (
-                  <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-3">
+                  <div
+                    className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+                    style={{ backgroundColor: "rgba(24, 24, 24, 0.85)" }}
+                  >
                     <Loader2 className="animate-spin" size={40} />
-                    <span className="text-sm text-slate-300">
+                    <span className="text-sm" style={{ color: "#999999" }}>
                       Loading models...
                     </span>
                   </div>
@@ -542,7 +662,15 @@ export default function AdminPanel() {
               <button
                 onClick={captureColleague}
                 disabled={isCapturingColleague || !modelsLoaded}
-                className="bg-blue-600 hover:bg-blue-500 disabled:bg-slate-600 px-6 py-3 rounded-lg font-bold transition flex items-center gap-2"
+                className="disabled:opacity-50 px-6 py-3 rounded-lg font-bold transition flex items-center gap-2"
+                style={{ backgroundColor: "#0079ff", color: "#181818" }}
+                onMouseEnter={(e) =>
+                  !e.currentTarget.disabled &&
+                  (e.currentTarget.style.backgroundColor = "#0066dd")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "#0079ff")
+                }
               >
                 {isCapturingColleague ? (
                   <>
@@ -559,13 +687,14 @@ export default function AdminPanel() {
 
               {colleagueStatus && (
                 <p
-                  className={`text-center text-sm ${
-                    colleagueStatus.startsWith("✅")
-                      ? "text-green-400"
+                  className="text-center text-sm"
+                  style={{
+                    color: colleagueStatus.startsWith("✅")
+                      ? "#fece00"
                       : colleagueStatus.startsWith("❌")
-                        ? "text-red-400"
-                        : "text-blue-400"
-                  }`}
+                        ? "#ff6b6b"
+                        : "#0079ff",
+                  }}
                 >
                   {colleagueStatus}
                 </p>
@@ -577,18 +706,28 @@ export default function AdminPanel() {
                 <h3 className="text-xl font-bold">Saved Colleagues</h3>
                 <button
                   onClick={fetchColleagues}
-                  className="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg transition text-sm"
+                  className="px-4 py-2 rounded-lg transition text-sm"
+                  style={{ backgroundColor: "#333333", color: "#fdf7de" }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#444444")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#333333")
+                  }
                 >
                   Refresh
                 </button>
               </div>
 
               {colleaguesLoading ? (
-                <div className="text-center text-slate-400">
+                <div className="text-center py-8" style={{ color: "#999999" }}>
                   Loading colleagues...
                 </div>
               ) : colleagues.length === 0 ? (
-                <div className="text-center text-slate-400 py-8 bg-slate-800 rounded-lg">
+                <div
+                  className="text-center py-8 rounded-lg"
+                  style={{ color: "#999999", backgroundColor: "#222222" }}
+                >
                   No colleagues added yet
                 </div>
               ) : (
@@ -596,21 +735,37 @@ export default function AdminPanel() {
                   {colleagues.map((colleague) => (
                     <div
                       key={colleague._id}
-                      className="bg-slate-800 rounded-lg p-4 flex flex-col justify-between"
+                      className="rounded-lg p-4 flex flex-col justify-between"
+                      style={{ backgroundColor: "#222222" }}
                     >
                       <div>
-                        <p className="font-bold text-white mb-2">{colleague.name}</p>
-                        <p className="text-slate-300 text-sm mb-3 italic">
+                        <p
+                          className="font-bold mb-2"
+                          style={{ color: "#fdf7de" }}
+                        >
+                          {colleague.name}
+                        </p>
+                        <p
+                          className="text-sm mb-3 italic"
+                          style={{ color: "#999999" }}
+                        >
                           "{colleague.riddle}"
                         </p>
-                        <p className="text-slate-500 text-xs">
+                        <p className="text-xs" style={{ color: "#666666" }}>
                           Face descriptor: {colleague.faceDescriptor.length}{" "}
                           values
                         </p>
                       </div>
                       <button
                         onClick={() => deleteColleague(colleague.name)}
-                        className="bg-red-600 hover:bg-red-500 p-2 rounded-lg transition mt-3 flex items-center justify-center"
+                        className="p-2 rounded-lg transition mt-3 flex items-center justify-center"
+                        style={{ backgroundColor: "#fece00", color: "#181818" }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#f5b300")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#fece00")
+                        }
                       >
                         <Trash2 size={18} />
                       </button>

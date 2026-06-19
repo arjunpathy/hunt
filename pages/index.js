@@ -427,9 +427,9 @@ export default function ScavengerHunt() {
         </h1>
         {savedState && (
           <div
-            className="mb-6 p-4 rounded-lg max-w-sm w-full text-center"
+            className="mb-6 p-4 rounded-lg max-w-sm w-full text-center border"
             style={{
-              backgroundColor: "rgba(0, 121, 255, 0.15)",
+              backgroundColor: "rgba(0, 121, 255, 0.08)",
               border: "1px solid #0079ff",
             }}
           >
@@ -452,9 +452,16 @@ export default function ScavengerHunt() {
                 window.location.reload();
               }}
               className="w-full px-4 py-2 rounded-lg transition text-sm"
-              style={{ backgroundColor: "#333333", color: "#fdf7de" }}
-              onMouseEnter={(e) => (e.target.style.backgroundColor = "#444444")}
-              onMouseLeave={(e) => (e.target.style.backgroundColor = "#333333")}
+              style={{
+                backgroundColor: "rgba(254, 206, 0, 0.15)",
+                color: "#181818",
+              }}
+              onMouseEnter={(e) =>
+                (e.target.style.backgroundColor = "rgba(254, 206, 0, 0.25)")
+              }
+              onMouseLeave={(e) =>
+                (e.target.style.backgroundColor = "rgba(254, 206, 0, 0.15)")
+              }
             >
               Start New Game
             </button>
@@ -463,12 +470,12 @@ export default function ScavengerHunt() {
         <input
           className="p-4 rounded-xl w-full max-w-sm mb-4 focus:outline-none"
           style={{
-            backgroundColor: "#222222",
+            backgroundColor: "rgba(0, 121, 255, 0.1)",
             color: "#fdf7de",
-            border: "1px solid #444444",
+            border: "1px solid #0079ff",
           }}
-          onFocus={(e) => (e.target.style.borderColor = "#0079ff")}
-          onBlur={(e) => (e.target.style.borderColor = "#444444")}
+          onFocus={(e) => (e.target.style.borderColor = "#fece00")}
+          onBlur={(e) => (e.target.style.borderColor = "#0079ff")}
           placeholder="Enter Team Name"
           value={teamName}
           onChange={(e) => setTeamName(e.target.value)}
@@ -489,34 +496,38 @@ export default function ScavengerHunt() {
         <div className="w-full max-w-sm grid grid-cols-2 gap-3 mb-10">
           <a
             href="/scores-management"
-            className="px-4 py-3 rounded-xl text-center font-semibold transition"
+            className="px-4 py-3 rounded-xl text-center font-semibold transition border"
             style={{
-              backgroundColor: "#222222",
+              backgroundColor: "rgba(0, 121, 255, 0.08)",
               color: "#fdf7de",
-              border: "1px solid #333333",
+              border: "1px solid rgba(0, 121, 255, 0.2)",
             }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#333333")
+              (e.currentTarget.style.backgroundColor =
+                "rgba(0, 121, 255, 0.15)")
             }
             onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "#222222")
+              (e.currentTarget.style.backgroundColor =
+                "rgba(0, 121, 255, 0.08)")
             }
           >
             Scores
           </a>
           <a
             href="/admin"
-            className="px-4 py-3 rounded-xl text-center font-semibold transition"
+            className="px-4 py-3 rounded-xl text-center font-semibold transition border"
             style={{
-              backgroundColor: "#222222",
+              backgroundColor: "rgba(0, 121, 255, 0.08)",
               color: "#fdf7de",
-              border: "1px solid #333333",
+              border: "1px solid rgba(0, 121, 255, 0.2)",
             }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#333333")
+              (e.currentTarget.style.backgroundColor =
+                "rgba(0, 121, 255, 0.15)")
             }
             onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "#222222")
+              (e.currentTarget.style.backgroundColor =
+                "rgba(0, 121, 255, 0.08)")
             }
           >
             Admin
@@ -556,14 +567,15 @@ export default function ScavengerHunt() {
           href="/scores-management"
           className="mb-6 px-5 py-2 rounded-full font-semibold transition"
           style={{
-            backgroundColor: "rgba(0, 121, 255, 0.2)",
+            backgroundColor: "rgba(0, 121, 255, 0.08)",
             color: "#0079ff",
+            border: "1px solid rgba(0, 121, 255, 0.2)",
           }}
           onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = "rgba(0, 121, 255, 0.3)")
+            (e.currentTarget.style.backgroundColor = "rgba(0, 121, 255, 0.15)")
           }
           onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = "rgba(0, 121, 255, 0.2)")
+            (e.currentTarget.style.backgroundColor = "rgba(0, 121, 255, 0.08)")
           }
         >
           View Scores
@@ -592,7 +604,7 @@ export default function ScavengerHunt() {
     >
       <div
         className="p-4 flex justify-between items-center"
-        style={{ backgroundColor: "#222222" }}
+        style={{ backgroundColor: "rgba(0, 121, 255, 0.06)" }}
       >
         <span className="font-bold">
           {currentIndex + 1}/{questions.length}
@@ -622,7 +634,7 @@ export default function ScavengerHunt() {
 
         <div
           className="relative rounded-3xl overflow-hidden w-full max-w-md aspect-square"
-          style={{ border: "4px solid #333333" }}
+          style={{ border: "4px solid rgba(0, 121, 255, 0.3)" }}
         >
           <Webcam
             audio={false}
@@ -634,7 +646,7 @@ export default function ScavengerHunt() {
           {isLoading && (
             <div
               className="absolute inset-0 flex items-center justify-center"
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+              style={{ backgroundColor: "rgba(0, 121, 255, 0.15)" }}
             >
               <Loader2 className="animate-spin" size={48} />
             </div>

@@ -346,7 +346,7 @@ export default function AdminPanel() {
               {!modelsLoaded && (
                 <div
                   className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-                  style={{ backgroundColor: "rgba(24, 24, 24, 0.85)" }}
+                  style={{ backgroundColor: "rgba(0, 121, 255, 0.1)" }}
                 >
                   <Loader2 className="animate-spin" size={40} />
                   <span className="text-sm" style={{ color: "#999999" }}>
@@ -408,7 +408,7 @@ export default function AdminPanel() {
                 <form
                   onSubmit={handleLogin}
                   className="w-full max-w-md p-8 rounded-lg"
-                  style={{ backgroundColor: "#222222" }}
+                  style={{ backgroundColor: "rgba(0, 121, 255, 0.08)" }}
                 >
                   <h2 className="text-2xl font-bold mb-6">Scores Management</h2>
                   <input
@@ -418,9 +418,9 @@ export default function AdminPanel() {
                     placeholder="Enter admin password"
                     className="w-full px-4 py-2 rounded-lg mb-4 focus:outline-none"
                     style={{
-                      backgroundColor: "#333333",
+                      backgroundColor: "rgba(0, 121, 255, 0.1)",
                       color: "#fdf7de",
-                      border: "1px solid #444444",
+                      border: "1px solid #0079ff",
                     }}
                     onFocus={(e) => (e.target.style.borderColor = "#0079ff")}
                     onBlur={(e) => (e.target.style.borderColor = "#444444")}
@@ -510,7 +510,7 @@ export default function AdminPanel() {
                 ) : scores.length === 0 ? (
                   <div
                     className="text-center py-8 rounded-lg"
-                    style={{ color: "#999999", backgroundColor: "#222222" }}
+                    style={{ color: "#999999", backgroundColor: "rgba(0, 121, 255, 0.08)" }}
                   >
                     No scores yet
                   </div>
@@ -524,7 +524,7 @@ export default function AdminPanel() {
                         <tr
                           className="text-sm"
                           style={{
-                            backgroundColor: "#222222",
+                            backgroundColor: "rgba(0, 121, 255, 0.05)",
                             color: "#999999",
                           }}
                         >
@@ -543,7 +543,7 @@ export default function AdminPanel() {
                             style={{ borderTop: "1px solid #333333" }}
                             onMouseEnter={(e) =>
                               (e.currentTarget.style.backgroundColor =
-                                "#222222")
+                                "rgba(0, 121, 255, 0.1)")
                             }
                             onMouseLeave={(e) =>
                               (e.currentTarget.style.backgroundColor =
@@ -586,7 +586,7 @@ export default function AdminPanel() {
 
                 <div
                   className="mt-8 p-4 rounded-lg text-sm"
-                  style={{ backgroundColor: "#222222", color: "#999999" }}
+                  style={{ backgroundColor: "rgba(254, 206, 0, 0.08)", color: "#999999", border: "1px solid rgba(254, 206, 0, 0.2)" }}
                 >
                   <p>Total scores: {scores.length}</p>
                 </div>
@@ -613,9 +613,9 @@ export default function AdminPanel() {
                 onChange={(e) => setColleagueName(e.target.value)}
                 className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full"
                 style={{
-                  backgroundColor: "#222222",
+                  backgroundColor: "rgba(0, 121, 255, 0.1)",
                   color: "#fdf7de",
-                  border: "1px solid #444444",
+                  border: "1px solid #0079ff",
                 }}
                 onFocus={(e) => (e.target.style.borderColor = "#0079ff")}
                 onBlur={(e) => (e.target.style.borderColor = "#444444")}
@@ -627,9 +627,9 @@ export default function AdminPanel() {
                 onChange={(e) => setColleagueRiddle(e.target.value)}
                 className="px-4 py-2 rounded-lg outline-none transition max-w-sm w-full h-24 resize-none"
                 style={{
-                  backgroundColor: "#222222",
+                  backgroundColor: "rgba(0, 121, 255, 0.1)",
                   color: "#fdf7de",
-                  border: "1px solid #444444",
+                  border: "1px solid #0079ff",
                 }}
                 onFocus={(e) => (e.target.style.borderColor = "#0079ff")}
                 onBlur={(e) => (e.target.style.borderColor = "#444444")}
@@ -707,12 +707,12 @@ export default function AdminPanel() {
                 <button
                   onClick={fetchColleagues}
                   className="px-4 py-2 rounded-lg transition text-sm"
-                  style={{ backgroundColor: "#333333", color: "#fdf7de" }}
+                  style={{ backgroundColor: "rgba(254, 206, 0, 0.15)", color: "#181818", border: "1px solid rgba(254, 206, 0, 0.3)" }}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#444444")
+                    (e.currentTarget.style.backgroundColor = "rgba(254, 206, 0, 0.25)")
                   }
                   onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#333333")
+                    (e.currentTarget.style.backgroundColor = "rgba(254, 206, 0, 0.15)")
                   }
                 >
                   Refresh
@@ -726,7 +726,7 @@ export default function AdminPanel() {
               ) : colleagues.length === 0 ? (
                 <div
                   className="text-center py-8 rounded-lg"
-                  style={{ color: "#999999", backgroundColor: "#222222" }}
+                  style={{ color: "#999999", backgroundColor: "rgba(0, 121, 255, 0.08)" }}
                 >
                   No colleagues added yet
                 </div>
@@ -735,8 +735,8 @@ export default function AdminPanel() {
                   {colleagues.map((colleague) => (
                     <div
                       key={colleague._id}
-                      className="rounded-lg p-4 flex flex-col justify-between"
-                      style={{ backgroundColor: "#222222" }}
+                      className="rounded-lg p-4 flex flex-col justify-between border"
+                      style={{ backgroundColor: "rgba(0, 121, 255, 0.05)", borderColor: "rgba(0, 121, 255, 0.2)" }}
                     >
                       <div>
                         <p
